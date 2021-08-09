@@ -417,7 +417,7 @@ int m_nick(int parc, char **parv)
 
                 if(!burst)
                         putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037NICK\2\3 %s \2\0037ADDRESS\2\3 %s@%s"
-                                " \2\0037SERVEUR\2\3 %s", os.num, bot.pchan, ntime->tm_hour, ntime->tm_min,
+                                " \2\0037SERVER\2\3 %s", os.num, bot.pchan, ntime->tm_hour, ntime->tm_min,
                                 ntime->tm_sec, nick, parv[4], parv[5], serv);
 
                 for(;i < NICKHASHSIZE;i++)
@@ -457,7 +457,7 @@ int m_nick(int parc, char **parv)
 
                 if((clonage > (clonemax -2)) && (!gettrusted(GetIP(who->base64))) && !burst) {
                         int i=0;
-			oswallops("CLONES *@%s NOMBRE %d/%d", who->host, clonage, clonemax);
+			    oswallops("CLONES *@%s NUMBER %d/%d", who->host, clonage, clonemax);
                         for(;i < NICKHASHSIZE;i++)
                         {
                                 for(n = nick_tab[i];n;n = n->next)
