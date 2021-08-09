@@ -32,7 +32,7 @@
 
 int uptime(aNick *nick, aChan *chaninfo, int parc, char **parv)
 {
-	return osntc(nick, "Les services sont en ligne depuis %s", duration(CurrentTS - bot.uptime));
+	return osntc(nick, "The service has been online since %s", duration(CurrentTS - bot.uptime));
 }
 
 int ctcp_ping(aNick *nick, aChan *chaninfo, int parc, char **parv)
@@ -43,13 +43,13 @@ int ctcp_ping(aNick *nick, aChan *chaninfo, int parc, char **parv)
 
 int ctcp_version(aNick *nick, aChan *chaninfo, int parc, char **parv)
 {
-    osntc(nick, "\1VERSION Services ODreams [" SPVERSION "] © IrcDreams.org (Compilé le " __DATE__ " "__TIME__ ")\1");
+    osntc(nick, "\1VERSION ODreams Service [" SPVERSION "] © Bugsounet.fr (Compiled on " __DATE__ " "__TIME__ ")\1");
 	return 1;
 }
 
 int version(aNick *nick, aChan *chaninfo, int parc, char **parv)
 {
-	osntc(nick, "Services ODreams [" SPVERSION "] © IrcDreams.org (Compilé le " __DATE__ " "__TIME__ ")");
+	osntc(nick, "ODreams Service [" SPVERSION "] © Bugsounet.fr (Compiled on " __DATE__ " "__TIME__ ")");
         return 1;
 }
 
@@ -57,9 +57,9 @@ int show_admins(aNick *nick, aChan *chaninfo, int parc, char **parv)
 {
 	int i = 0;
 	anUser *u;
-	osntc(nick, "\2Présent  Niveau  Username       Pseudo\2");
+	osntc(nick, "\2Here  Level  Username       Nickname\2");
 	for(;i < USERHASHSIZE;++i) for(u = user_tab[i];u;u = u->next)
 		if(IsAdmin(u)) osntc(nick, "\2\003%s\2\3      %d       %-13s  \0032%s\3",
-				u->n ? "3OUI" : "4NON", u->level, u->nick, u->n ? u->n->nick : "");
+				u->n ? "3YES" : "4NO", u->level, u->nick, u->n ? u->n->nick : "");
 	return 1;
 }

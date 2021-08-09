@@ -377,7 +377,7 @@ int write_files(aNick *nick, aChan *chan, int parc, char **parv)
         write_bad();
         write_ex();
         write_trace();
-        osntc(nick, "Les fichiers ont bien été écrits.");
+        osntc(nick, "All files have been written successfully.");
         return 1;
 }
 

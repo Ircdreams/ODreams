@@ -107,7 +107,7 @@ int m_clearmode(int parc, char **parv)
         int i = 0;
 
 
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037CLEARMODE\2\3 %s par %s (%s)", os.num, bot.pchan, ntime->tm_hour,
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037CLEARMODE\2\3 %s by %s (%s)", os.num, bot.pchan, ntime->tm_hour,
         ntime->tm_min, ntime->tm_sec, parv[1], GetInfobyPrefix(parv[0]), parv[2]);
 
 	if(strchr(parv[2], 'o')) clear |= J_OP;
@@ -203,11 +203,11 @@ int m_mode(int parc, char **parv)
 		} /* while */
 
 		if(GetInfobyPrefix(parv[0]))
-		putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s %spar %s", os.num,
+		putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s %sby %s", os.num,
 		bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], params, 
 		GetInfobyPrefix(parv[0]));
 		else
-		putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s %spar %s", os.num,
+		putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s %sby %s", os.num,
                 bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], params,
                 num2servinfo(parv[0]));
 		
@@ -217,10 +217,10 @@ int m_mode(int parc, char **parv)
 	nick->flag = parse_umode(nick->flag, parv[2]);
 	
 	if(GetInfobyPrefix(parv[0]))
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s par %s", os.num,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s by %s", os.num,
         bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], GetInfobyPrefix(parv[0]));
 	else
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s par %s", os.num,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s by %s", os.num,
         bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], num2servinfo(parv[0]));
 		
 	if(*parv[2] == '+')
@@ -228,13 +228,13 @@ int m_mode(int parc, char **parv)
 		char *modes = parv[2];
 		for(modes = parv[2]; *modes; modes++)
 		{
-                        if(*modes == 'a') {
+            if(*modes == 'a') {
 			  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] ! \2\0037OPER\2\3 %s est un Irc Administrateur (+a)", os.num, bot.pchan,
                           ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1]);
                           putserv("%s " TOKEN_WALLOPS " :%s est un Irc Administrateur", os.num,parv[1]);
  			}
 			if(*modes == 'c') {
-                          putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] ! \2\0037OPER\2\3 %s est un Irc Co-Administrateur (+c)", os.num, bot.pchan,
+              putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] ! \2\0037OPER\2\3 %s est un Irc Co-Administrateur (+c)", os.num, bot.pchan,
                           ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1]);
                           putserv("%s " TOKEN_WALLOPS " :%s est un Irc Co-Administrateur", os.num,parv[1]);
                         }
@@ -289,7 +289,7 @@ int m_part(int parc, char **parv)
 	if(!(nick = GetInfobyPrefix(parv[0])))
 		return Debug(W_DESYNCH|W_WARN, "PART %s de %s: aNick non trouvé!", parv[1], parv[0]);
 
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037PART\2\3 %s par %s :%s", os.num, bot.pchan, ntime->tm_hour,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037PART\2\3 %s by %s :%s", os.num, bot.pchan, ntime->tm_hour,
 		ntime->tm_min, ntime->tm_sec, parv[1], nick, parc > 2 ? parv[2] : "Aucune raison");
 
 	for(p = Strtok(&ptr, parv[1], ',');p;p = Strtok(&ptr, NULL, ',')) del_join(nick, p);
@@ -306,10 +306,10 @@ int m_kick(int parc, char **parv)
 	aNick *v;
 	
 	if(GetInfobyPrefix(parv[0]))
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037KICK\2\3 %s sur %s par %s (%s)", os.num, bot.pchan, ntime->tm_hour,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037KICK\2\3 %s in %s by %s (%s)", os.num, bot.pchan, ntime->tm_hour,
                 ntime->tm_min, ntime->tm_sec, GetInfobyPrefix(parv[2]), parv[1], GetInfobyPrefix(parv[0]), parv[3]);
 	else
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037KICK\2\3 %s sur %s par %s (%s)", os.num, bot.pchan, ntime->tm_hour,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037KICK\2\3 %s in %s by %s (%s)", os.num, bot.pchan, ntime->tm_hour,
                 ntime->tm_min, ntime->tm_sec, GetInfobyPrefix(parv[2]), parv[1], num2servinfo(parv[0]), parv[3]);
 
 	if(parc < 3) return Debug(W_PROTO|W_WARN, "#arg invalide: KICK de %s: #arg=%d", parv[0], parc);
@@ -337,7 +337,7 @@ int m_join(int parc, char **parv)
 	if(!(nick = GetInfobyPrefix(parv[0])))
 		return Debug(W_DESYNCH|W_WARN, "JOIN %s de %s: aNick non trouvé!", parv[1], parv[0]);
 
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037JOIN\2\3 %s par %s", os.num, bot.pchan, ntime->tm_hour, 
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037JOIN\2\3 %s by %s", os.num, bot.pchan, ntime->tm_hour, 
 		ntime->tm_min, ntime->tm_sec, parv[1], nick);
 
 	if(*parv[1] == '0') /* partall !!*/
@@ -376,7 +376,7 @@ int m_create(int parc, char **parv)
 	if(!(nick = num2nickinfo(parv[0])))
 		return Debug(W_DESYNCH|W_WARN, "CREATE %s de %s: aNick non trouvé!", parv[1], parv[0]);
 
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037CREATE\2\3 %s par %s", os.num, bot.pchan, ntime->tm_hour, 
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037CREATE\2\3 %s by %s", os.num, bot.pchan, ntime->tm_hour, 
 		ntime->tm_min, ntime->tm_sec, parv[1], nick);
 
 	for(p = Strtok(&ptr, parv[1], ',');p;p = Strtok(&ptr, NULL, ','))
@@ -416,7 +416,7 @@ int m_nick(int parc, char **parv)
                 if(!who) return 0; /* sauvetage temporaire..*/
 
                 if(!burst)
-                        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037PSEUDO\2\3 %s \2\0037ADRESSE\2\3 %s@%s"
+                        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037NICK\2\3 %s \2\0037ADDRESS\2\3 %s@%s"
                                 " \2\0037SERVEUR\2\3 %s", os.num, bot.pchan, ntime->tm_hour, ntime->tm_min,
                                 ntime->tm_sec, nick, parv[4], parv[5], serv);
 
@@ -448,11 +448,11 @@ int m_nick(int parc, char **parv)
 
 
                 if((clonage > 1) && (!gettrusted(GetIP(who->base64))) && !burst)
-                        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037CLONES\2\3 *@%s \2\0037NOMBRE\2\3 %d/%d"
+                        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037CLONES\2\3 *@%s \2\0037NUMBER\2\3 %d/%d"
                 		,os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, who->host, clonage, clonemax);
 
                 if((clonage > 1) && (gettrusted(GetIP(who->base64))) && !burst)
-                        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037CLONES\2\3 *@%s \2\0037NOMBRE\2\3 %d \2\0034(Trusted)\2\3"
+                        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] > \2\0037CLONES\2\3 *@%s \2\0037NUMBER\2\3 %d \2\0034(Trusted)\2\3"
                 		,os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, who->host, clonage);
 
                 if((clonage > (clonemax -2)) && (!gettrusted(GetIP(who->base64))) && !burst) {
@@ -498,7 +498,7 @@ int m_nick(int parc, char **parv)
                 if(!(who = num2nickinfo(parv[0])))
                         return Debug(W_DESYNCH|W_WARN, "NICK %s > %s: aNick non trouvé!", parv[0], nick);
 
-                putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037NICK\2\3 de %s en %s", os.num, bot.pchan,
+                putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037NICK\2\3 from %s to %s", os.num, bot.pchan,
                                                 ntime->tm_hour, ntime->tm_min, ntime->tm_sec, who, nick);
                 switch_nick(who, nick);
         }
@@ -571,7 +571,7 @@ int m_quit(int parc, char **parv)
 {
 	time_t tmt = CurrentTS;
 	struct tm *ntime = localtime(&tmt);
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037QUIT\2\3 de %s : %s", os.num, bot.pchan, ntime->tm_hour,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037QUIT\2\3 from %s : %s", os.num, bot.pchan, ntime->tm_hour,
                 ntime->tm_min, ntime->tm_sec, GetInfobyPrefix(parv[0]), parv[1]);
 	del_nickinfo(parv[0], "QUIT");
 	return 0;	
@@ -594,10 +594,10 @@ int m_kill(int parc, char **parv)
 	else if(!nick) return Debug(W_DESYNCH|W_WARN, "KILL de %s sur %s: aNick non trouvé!", parv[0], parv[1]);
 
 	if(GetInfobyPrefix(parv[0]))
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 de %s par %s :%s", os.num, bot.pchan, ntime->tm_hour,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 %s by %s :%s", os.num, bot.pchan, ntime->tm_hour,
                 ntime->tm_min, ntime->tm_sec, nick, GetInfobyPrefix(parv[0]), raison);
 	else
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 de %s par %s :%s", os.num, bot.pchan, ntime->tm_hour,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 %s by %s :%s", os.num, bot.pchan, ntime->tm_hour,
                 ntime->tm_min, ntime->tm_sec, nick, num2servinfo(parv[0]), raison);
 
 	del_nickinfo(parv[1], "KILL");
@@ -661,11 +661,11 @@ int m_topic(int parc, char **parv)
 	if(!burst)
 	{
 	        if(num2servinfo(parv[0]))
-        	        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037TOPIC\2\3 %s %s \3par %s", os.num,
+        	        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037TOPIC\2\3 %s %s \3by %s", os.num,
                                 bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec,
                                 parv[1], parv[parc-1], num2servinfo(parv[0]));
 	        else
-        	        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037TOPIC\2\3 %s %s \3par %s", os.num,
+        	        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037TOPIC\2\3 %s %s \3by %s", os.num,
                                 bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec,
                                 parv[1], parv[parc-1], num2nickinfo(parv[0]));
 	}
@@ -689,7 +689,7 @@ int m_eob(int parc, char **parv)
 
 	if(serv == mainhub) /* mon uplink a fini son burst, j'envoie la fin du mien!*/
 	{
-		putserv("%s "TOKEN_BURST" %s %ld +Omintrs %s:o", bot.servnum, bot.pchan, num2nickinfo(os.num)->floodtime, os.num);
+		putserv("%s "TOKEN_BURST" %s %ld +Ointrs %s:o", bot.servnum, bot.pchan, num2nickinfo(os.num)->floodtime, os.num);
 		putserv("%s " TOKEN_EOB, bot.servnum);
 		putserv("%s " TOKEN_EOBACK, bot.servnum);
 
@@ -698,8 +698,8 @@ int m_eob(int parc, char **parv)
 			double tt;
 			gettimeofday(&tv, NULL);/*un peu de stats sur le burst pour *fun* */
 			tt = (tv.tv_usec - burst) / 1000000.0;
-			oswallops("Connexion de ODreams %s effectuée", SPVERSION);
-			putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0033BURST\2\3 Connexion de ODreams %s effectuée", 
+			oswallops("ODreams %s Connected", SPVERSION);
+			putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0033BURST\2\3 ODreams %s Connected", 
 				os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, SPVERSION);
 			if(!deconnexion) 
 				load_gline();
@@ -748,7 +748,7 @@ int m_squit(int parc, char **parv)
 	time_t tmt = CurrentTS;
 	struct tm *ntime = localtime(&tmt);
 
-	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037SQUIT\2\3 de %s", os.num, bot.pchan, ntime->tm_hour,
+	putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037SQUIT\2\3 by %s", os.num, bot.pchan, ntime->tm_hour,
                 ntime->tm_min, ntime->tm_sec, parv[1]);
 
 	if(parc < 2) return Debug(W_PROTO|W_WARN, "#arg invalide: SQUIT de %s: arg=%d", parv[0], parc);

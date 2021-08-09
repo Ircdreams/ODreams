@@ -64,7 +64,7 @@ int BuildCommandsTable(int rebuild)
 		{/* preparons les buffers */
 			tmp->nb = 1;
 			tmp->buf = malloc(sizeof *tmp->buf);
-			tmp->level = sprintf(*tmp->buf, "\2\0033Niveau %3d:\2\3", level);
+			tmp->level = sprintf(*tmp->buf, "\2\0033Level %3d:\2\3", level);
 		}
 		else if(tmp->level > 85)/* ligne pleine, ajoutons une nouvelle */
 		{

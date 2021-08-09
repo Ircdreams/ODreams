@@ -109,7 +109,7 @@ int restart_bot(aNick *nick, aChan *chaninfo, int parc, char **parv)
 	running = 0;
 	ConfFlag |= CF_RESTART;
 
-	putserv("%s " TOKEN_QUIT " :%s [\2Redémarrage\2]", os.num, r);
+	putserv("%s " TOKEN_QUIT " :%s [\2Restart\2]", os.num, r);
 	putserv("%s "TOKEN_SQUIT" %s 0 :%s [\2RESTART\2]", bot.servnum, bot.server, r);
 
 	db_write_users();
@@ -129,12 +129,12 @@ int chcomname(aNick *nick, aChan *chaninfo, int parc, char **parv)
 	const char *newcmd = parv[2], *lastcmd = parv[1];
 
 	if(strlen(newcmd) > CMDLEN)
-		return osntc(nick, "Un nom de commande ne doit pas dépasser 14 caractères.");
+		return osntc(nick, "A command name must not exceed 14 characters.");
 
 	if(!(cmd = FindCommand(lastcmd)) || *cmd->name == '\1')
-		return osntc(nick, "La commande \2%s\2 n'existe pas.", lastcmd);
+		return osntc(nick, "The command \2%s\2 does not exist.", lastcmd);
 
-	if(FindCommand(newcmd)) return osntc(nick, "La commande %s existe déjà.", newcmd);
+	if(FindCommand(newcmd)) return osntc(nick, "The %s command already exists.", newcmd);
 
 	HashCmd_switch(cmd, newcmd);
 	osntc(nick, "La commande\2 %s\2 s'appelle maintenant\2 %s\2.", lastcmd, cmd->name);

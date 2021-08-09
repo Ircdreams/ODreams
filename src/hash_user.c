@@ -82,7 +82,7 @@ anUser *add_regnick(const char *user, int level)
 
 void del_regnick(anUser *user)
 {
-        hash_deluser(user);
-        free(user);
-	db_write_users();
+  hash_deluser(user);
+  free(user);
+  db_write_users();
 }

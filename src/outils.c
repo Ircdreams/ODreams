@@ -246,7 +246,7 @@ char *duration(int s)
 	dur[0] = '\002'; 
     
         if(s >= 86400) 
-                i += sprintf(dur + i, "%d", s/86400), s %= 86400, strcpy(dur + i, "\2 jours \002"), i += 9; 
+                i += sprintf(dur + i, "%d", s/86400), s %= 86400, strcpy(dur + i, "\2 jours \002"), i += 9;
         if(s >= 3600) 
                 i += sprintf(dur + i, "%d", s/3600), s %= 3600, strcpy(dur + i, "\2 heures \002"), i += 10; 
         if(s >= 60) 

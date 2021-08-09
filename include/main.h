@@ -33,15 +33,12 @@
 #include "token.h"
 
 /* Version de ODreams */
-/*
-#define PATCH_LEVEL "4"
-#define RELEASE_CANDIDATE "10"
-#define BASE_SERVICE "1"
 
-#define SD_VERSION BASE_SERVICE " RC" RELEASE_CANDIDATE " pl" PATCH_LEVEL
-*/
+#define PATCH_LEVEL "0+DEV"
+#define RELEASE_CANDIDATE "0"
+#define BASE_SERVICE "2"
 
-#define SD_VERSION "1.11.RELEASED"
+#define SD_VERSION BASE_SERVICE "." RELEASE_CANDIDATE "." PATCH_LEVEL
 
 #define SPVERSION SD_VERSION
 
@@ -76,13 +73,13 @@
 #define WAIT_CONNECT 10 /* Temps qu'attend le serveur avant de retenter une connexion */
 
 #define IsAdmin(x)              ((x)->level >= ADMINLEVEL)
-#define IsAnAdmin(x)    	((x) && IsAdmin(x)) /* x est un admin ? */
-#define IsOper(x) 		((x)->flag & N_OPER)
+#define IsAnAdmin(x)    	    ((x) && IsAdmin(x)) /* x est un admin ? */
+#define IsOper(x) 		        ((x)->flag & N_OPER)
 #define IsOperOrService(x)      ((x)->flag & (N_OPER|N_SERVICE))
-#define IsService(x)		((x)->flag & N_SERVICE)
-#define IsAway(x) 		((x)->flag & N_AWAY)
-#define IsHelper(x)		((x)->flag & N_HELPER)
-#define IsHiding(x)		((x)->flag & N_HIDE)
+#define IsService(x)		    ((x)->flag & N_SERVICE)
+#define IsAway(x) 		        ((x)->flag & N_AWAY)
+#define IsHelper(x)		        ((x)->flag & N_HELPER)
+#define IsHiding(x)		        ((x)->flag & N_HIDE)
 
 #define MAXNUM 4096
 #define NUMSERV 2
@@ -103,10 +100,10 @@
 #define HasDMode(chan, flag)    ((chan)->defmodes.modes & (flag))
 #define ChanCmd(x) 				((x)->flag & CMD_CHAN)
 #define AdmCmd(x) 				((x)->flag & CMD_ADMIN)
-#define NeedNoAuthCmd(x)                        ((x)->flag & CMD_NEEDNOAUTH)
-#define SecureCmd(x)                    ((x)->flag & CMD_SECURE) 
-#define Secure2Cmd(x)                   ((x)->flag & CMD_SECURE2) 
-#define HelpCmd(x)			((x)->flag & CMD_HELPER)
+#define NeedNoAuthCmd(x)        ((x)->flag & CMD_NEEDNOAUTH)
+#define SecureCmd(x)            ((x)->flag & CMD_SECURE)
+#define Secure2Cmd(x)           ((x)->flag & CMD_SECURE2)
+#define HelpCmd(x)			    ((x)->flag & CMD_HELPER)
 
 #define GetConf(x) 				(ConfFlag & (x))
 #define ASIZE(x) 				(sizeof (x) / sizeof *(x))
