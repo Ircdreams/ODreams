@@ -443,7 +443,7 @@ int xblock(aNick *nick, aChan *chan, int parc, char **parv)
 
   putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037BLOCK\2\3 *!*@%s", 
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, GetIP(n->base64));
-  putserv("%s GL * +%s 3600 :%s [Expire %s]", bot.servnum, params, raison, get_time(NULL,end));
+  putserv("%s GL * +%s 3600 %d %d :%s [Expire %s]", bot.servnum, params, tmt, end, raison, get_time(NULL,end));
 
   add_gline(params,CurrentTS + 3600, raison);
   write_gline();
@@ -550,7 +550,7 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
   else if(!strcasecmp(cmd, "FORCEDEL")) {
     if (parc < 2)
       return osntc(nick, "Syntaxe: GLINE FORCEDEL <ident@host>");
-    putserv("%s GL * -%s", bot.servnum, host);
+    putserv("%s GL * -%s %d %d", bot.servnum, host, CurrentTS, CurrentTS);
     putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037UNGLINE\2\3 %s", 
       os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, host); 
     osntc(nick, "Gline retiré: %s", host);
