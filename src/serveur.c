@@ -785,7 +785,7 @@ static int exec_cmd(aHashCmd *cmd, unsigned int secure, aNick *nick, int parc, c
     tmp3 = parv2msg(parc, parv, 1, 400);
   
   if(nick->user)
-    fastfmt(buff, "\00312\2$\2\3 $ byr $@$", cmd->name, tmp3, nick->nick, nick->user->nick);
+    fastfmt(buff, "\00312\2$\2\3 $ by $@$", cmd->name, tmp3, nick->nick, nick->user->nick);
   else
     fastfmt(buff, "\00312\2$\2\3 $ by $", cmd->name, tmp3, nick->nick);
   
