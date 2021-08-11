@@ -48,21 +48,21 @@ int first_register(aNick *nick, aChan *chaninfo, int parc, char **parv)
   aHashCmd *cmdp = FindCommand("REGISTER");
 
   if (!(n = getnickbynick(parv[1])))
-    return osntc(nick, "%s n'est pas connecté.", parv[1]);
+    return osntc(nick, "No such nick: %s", parv[1]);
 
   if(!(n->flag & N_OPER))
-    return osntc(nick, "Commande réservé aux Ircops !");
+    return osntc(nick, "Permission Denied: You are not an IRC Operator !");
 
   if(!GetConf(CF_PREMIERE))
-    return osntc(nick, "Commande réservé au premier lancement!");
+    return osntc(nick, "Reserved for the first launch!");
 
   if((user = getuserinfo(parv[1])))
-    return osntc(nick, "%s est déjà enregistré.", user->nick);
+    return osntc(nick, "%s is already registered", user->nick);
 
   user = add_regnick(parv[1], 10);
 
-  osntc(nick, "Bienvenue sur les Services ODreams [" SPVERSION "] !");
-  osntc(nick, "Vous êtes Administrateurs de niveau maximum.");
+  osntc(nick, "Welcome to ODreams IRC Service [" SPVERSION "] !");
+  osntc(nick, "You are a maximum level administrator.");
 
   ConfFlag &= ~CF_PREMIERE;
   cmdp->flag |= CMD_DISABLE;
@@ -87,65 +87,65 @@ int user(aNick *nick, aChan *chaninfo, int parc, char **parv)
 
   if(!strcasecmp(cmd, "ADD")) {
     if (parc < 3)
-      return osntc(nick, "Syntaxe: USER ADD <username> <level>");
+      return osntc(nick, "Syntax: USER ADD <username> <level>");
     if((user = getuserinfo(parv[2])))
-      return osntc(nick, "%s est déjà enregistré.", user->nick);
+      return osntc(nick, "%s is already registered.", user->nick);
 
     if(!is_num(parv[3]) || (level = atoi(parv[3])) > MAXADMLVL || level < 1)
-      return osntc(nick, "Le level doit être compris entre 1 et %d", MAXADMLVL);
+      return osntc(nick, "The level must be between 1 and %d", MAXADMLVL);
 
     if(level >= nick->user->level && nick->user->level != MAXADMLVL)
-      return osntc(nick, "Vous ne pouvez pas donner un niveau supérieur au votre.");
+      return osntc(nick, "You cannot ADD a level higher than yours.");
 
     user = add_regnick(parv[2], atoi(parv[3]));
     db_write_users();
 
-    osntc(nick, "%s a été enregistré au level %d", user->nick, user->level);
+    osntc(nick, "%s was recorded with level %d", user->nick, user->level);
   }
   else if(!strcasecmp(cmd, "DEL")) {
     if (parc < 2)
-      return osntc(nick, "Syntaxe: USER DEL <username>");
+      return osntc(nick, "Syntax: USER DEL <username>");
     if(!(user = getuserinfo(parv[2])))
-      return osntc(nick, "%s n'est pas dans la base de donnée", parv[2]);
+      return osntc(nick, "%s is not registered", parv[2]);
     if(level >= nick->user->level && nick->user->level != MAXADMLVL)
-      return osntc(nick, "Vous ne pouvez pas donner un niveau supérieur au votre.");
+      return osntc(nick, "You cannot DEL a level higher than yours.");
     if(user->n)
-      osntc(user->n, "Votre compte vient d'être supprimé par l'Administrateur %s", nick->nick);
+      osntc(user->n, "Your account has just been deleted by an Administrator (%s)", nick->nick);
 
-    osntc(nick, "Le compte %s a bien été supprimé.", user->nick);
+    osntc(nick, "This account has been deleted: %s", user->nick);
     del_regnick(user);
   }
   else if(!strcasecmp(cmd, "LIST")) {
-    osntc(nick, "\2Niveau  Username\2");
+    osntc(nick, "\2Level  Username\2");
     for(;i < USERHASHSIZE;++i) for(user = user_tab[i];user;user = user->next)
     osntc(nick, "%d       %-13s", user->level, user->nick);
   }
   else if(!strcasecmp(cmd, "LEVEL")) {
     if (parc < 3)
-      return osntc(nick, "Syntaxe: USER LEVEL <username> <level>");
+      return osntc(nick, "Syntax: USER LEVEL <username> <level>");
     if(!is_num(parv[3]) || (level = atoi(parv[3])) > MAXADMLVL || level < 0)
-      return osntc(nick, "Veuillez préciser un level valide.");
+      return osntc(nick, "The level must be between 1 and %d", MAXADMLVL);
 
     if(!(user = getuserinfo(parv[2])))
-      return osntc(nick, "\2%s\2 n'est pas un UserName enregistré.", parv[2]);
+      return osntc(nick, "%s is not registered.", parv[2]);
 
     if(level >= nick->user->level && nick->user->level != MAXADMLVL)
-      return osntc(nick, "Vous ne pouvez pas donner un niveau supérieur au votre.");
+      return osntc(nick, "You cannot change a level higher than yours.");
 
     if(level == 0)
-      return osntc(nick, "Un Administrateur doit avoir un niveau > 0");
+      return osntc(nick, "An Administrator must have a level> 0");
  
     if(level == user->level)
-      return osntc(nick, "%s est déjà au niveau %d.", user->nick, level);
+      return osntc(nick, "%s is already at level: %d", user->nick, level);
   
     if(level < ADMINLEVEL)
     {
-      osntc(nick, "%s n'est plus Administrateur.", user->nick);
+      osntc(nick, "%s is no longer Administrator.", user->nick);
       if(user->n) adm_active_del(user->n);
     }
     else if(user->level < ADMINLEVEL)
     {
-      osntc(nick, "%s est maintenant Administrateur au niveau\2 %d\2.", user->nick, level);
+      osntc(nick, "%s is now an Administrator Level\2 %d\2.", user->nick, level);
       if(user->n) adm_active_del(user->n);
     }
     else osntc(nick, "Vous avez modifié le niveau Administrateur de \2%s\2 en\2 %d\2.", user->nick, level);
@@ -153,7 +153,7 @@ int user(aNick *nick, aChan *chaninfo, int parc, char **parv)
     user->level = level;
     db_write_users();
   }
-  else return osntc(nick, "Option inconnue: %s", cmd);
+  else return osntc(nick, "Unknown option: %s", cmd);
   return 1;
 }
 
@@ -521,7 +521,7 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
   }
   else if (!strcasecmp(cmd, "DEL")) {
     if (parc < 2)
-      return osntc(nick, "Syntaxe: GLINE DEL <ident@host>");
+      return osntc(nick, "Syntax: GLINE DEL <ident@host>");
     if(!glinehead)
       return osntc(nick, "La liste des Hosts-Glined est vide!");
     
@@ -529,7 +529,7 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
       save = tmp->next;
       
       if(!mmatch(host,tmp->host)) {
-        putserv("%s GL * -%s", bot.servnum, tmp->host);
+        putserv("%s GL * -%s %d %d", bot.servnum, tmp->host, tmt, tmt);
         putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037UNGLINE\2\3 %s",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, tmp->host);
         osntc(nick, "Gline retiré: %s", tmp->host);
@@ -549,8 +549,8 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
   }
   else if(!strcasecmp(cmd, "FORCEDEL")) {
     if (parc < 2)
-      return osntc(nick, "Syntaxe: GLINE FORCEDEL <ident@host>");
-    putserv("%s GL * -%s %d %d", bot.servnum, host, CurrentTS, CurrentTS);
+      return osntc(nick, "Syntax: GLINE FORCEDEL <ident@host>");
+    putserv("%s GL * -%s %d %d", bot.servnum, host, tmt, tmt);
     putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037UNGLINE\2\3 %s", 
       os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, host); 
     osntc(nick, "Gline retiré: %s", host);
