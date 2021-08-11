@@ -33,51 +33,51 @@
 
 static inline unsigned int do_hashu(const char *user)
 {
-	unsigned int checksum = 0;
-	while(*user) checksum += (checksum << 3) + tolower(*user++);
-	return checksum & (USERHASHSIZE-1);
+  unsigned int checksum = 0;
+  while(*user) checksum += (checksum << 3) + tolower(*user++);
+  return checksum & (USERHASHSIZE-1);
 }
 
 static int hash_deluser(anUser *user)
 {
-	unsigned int hash = do_hashu(user->nick);
-	anUser *tmp = user_tab[hash];
+  unsigned int hash = do_hashu(user->nick);
+  anUser *tmp = user_tab[hash];
 
-	if(tmp == user) user_tab[hash] = user->next;
-	else
-	{
-		for(;tmp && tmp->next != user;tmp = tmp->next);
-		if(tmp) tmp->next = user->next;
-		else Debug(W_WARN|W_MAX, "H_del_user %s non trouvé à l'offset %u ?!", user->nick, hash);
-	}
-	return 0;
+  if(tmp == user) user_tab[hash] = user->next;
+  else
+  {
+    for(;tmp && tmp->next != user;tmp = tmp->next);
+    if(tmp) tmp->next = user->next;
+    else Debug(W_WARN|W_MAX, "H_del_user %s non trouvé à l'offset %u ?!", user->nick, hash);
+  }
+  return 0;
 }
 
 anUser *getuserinfo(const char *nick)
 {
-	unsigned int hash = do_hashu(nick);
-	register anUser *tmp = user_tab[hash];
-	for(;tmp && strcasecmp(nick, tmp->nick);tmp=tmp->next);
-	return tmp;
+  unsigned int hash = do_hashu(nick);
+  register anUser *tmp = user_tab[hash];
+  for(;tmp && strcasecmp(nick, tmp->nick);tmp=tmp->next);
+  return tmp;
 }
 
 anUser *add_regnick(const char *user, int level)
 {
-	anUser *new;
-	unsigned int hash = do_hashu(user);
+  anUser *new;
+  unsigned int hash = do_hashu(user);
 
-	if(!(new = calloc(1, sizeof *new)))
-	{
-		Debug(W_MAX|W_WARN, "add_regnick, malloc a échoué pour anUser %s", user);
-		return NULL;
-	}
+  if(!(new = calloc(1, sizeof *new)))
+  {
+    Debug(W_MAX|W_WARN, "add_regnick, malloc a échoué pour anUser %s", user);
+    return NULL;
+  }
 
-	Strncpy(new->nick, user, NICKLEN);
-	new->level = level;
+  Strncpy(new->nick, user, NICKLEN);
+  new->level = level;
 
-	new->next = user_tab[hash];
-	user_tab[hash] = new;
-	return new;
+  new->next = user_tab[hash];
+  user_tab[hash] = new;
+  return new;
 }
 
 void del_regnick(anUser *user)
