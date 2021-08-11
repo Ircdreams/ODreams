@@ -590,14 +590,14 @@ int m_whois(int parc, char **parv)
 
   if(!n) return 0;
 
-  putserv("%s 311 %s %s %s %s * :%s", bot.servnum, parv[0], n->nick, n->ident, (n->user && n->flag & N_CRYPT) ? "hidden" : n->host, n->name);
-  putserv("%s 312 %s %s %s :%s", bot.servnum, parv[0], parv[2], n->serveur->serv, n->name );
+  putserv("%s 311 %s %s %s %s * :%s", bot.servnum, parv[0], n->nick, n->ident, n->host, n->name);
+  putserv("%s 312 %s %s %s :%s", bot.servnum, parv[0], parv[2], n->serveur->serv, bot.name );
 
   if(IsOper(n))
     putserv("%s 313 %s %s :is an IRC Service", bot.servnum, parv[0], parv[2]);
 
-  putserv("%s 317 %s %s %ld %ld :Secondes d'idle, secondes d'uptime", bot.servnum, parv[0], parv[2], CurrentTS - bot.uptime, bot.uptime);
-  putserv("%s 318 %s %s :Fin de la commande /WHOIS", bot.servnum, parv[0], parv[2]);
+  putserv("%s 317 %s %s %ld %ld :seconds idle, signon time", bot.servnum, parv[0], parv[2], CurrentTS - bot.uptime, bot.uptime);
+  putserv("%s 318 %s %s :End of /WHOIS list.", bot.servnum, parv[0], parv[2]);
   return 0;
 }
 

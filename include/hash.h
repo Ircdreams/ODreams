@@ -41,8 +41,7 @@ extern aChan *getchaninfo(const char *);
 extern unsigned int base64toint(const char *);
 extern aNick *num2nickinfo(const char *);
 extern aNick *getnickbynick(const char *);
-extern aNick *add_nickinfo(const char *, const char *, const char *, const char *,
-			const char *, aServer *, const char *, time_t, const char *);
+extern aNick *add_nickinfo(const char *, const char *, const char *, const char *, const char *, aServer *, const char *, time_t, const char *);
 extern void del_nickinfo(const char *, const char *);
 extern int switch_nick(aNick *, const char*);
 extern int purge_nickandserv(void);
