@@ -3,7 +3,7 @@
 Action: Verifie si l'ip n'est pas listé comme proxy sur opm.blitzed.org.
 #ADMIN
 Action: Montre les pseudos des Administrateurs des Services
-#AIDE
+#HELP
 Action: Permet d'avoir de l'aide à propos d'une commande.
 #BADCHAN
 !%s <ADD|DEL|LIST> [<mask>|[-from <user> -match <mask>] [raison]]
