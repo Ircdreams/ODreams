@@ -185,7 +185,7 @@ int xop(aNick *nick, aChan *chaninfo, int parc, char **parv)
     }
     DoOp(join);
     putserv("%s " TOKEN_MODE " %s +o %s", bot.servnum, join, n->numeric);
-    putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +o %s par %s", os.num,
+    putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +o %s by %s", os.num,
                   bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[i], num2servinfo(bot.servnum));
 
   }                               
@@ -220,7 +220,7 @@ int xhalf(aNick *nick, aChan *chaninfo, int parc, char **parv)
     }
     DoHalf(join);
     putserv("%s " TOKEN_MODE " %s +h %s", bot.servnum, join, n->numeric);
-    putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +h %s par %s", os.num,
+    putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +h %s by %s", os.num,
       bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[i], num2servinfo(bot.servnum));
    }
    return 1;
@@ -254,7 +254,7 @@ int xvoice(aNick *nick, aChan *chaninfo, int parc, char **parv)
     }
     DoVoice(join);
     putserv("%s " TOKEN_MODE " %s +v %s", bot.servnum, join, n->numeric);
-    putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +v %s par %s", os.num,
+    putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +v %s by %s", os.num,
       bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], num2servinfo(bot.servnum));
 
   }
@@ -286,7 +286,7 @@ int xdeop(aNick *nick, aChan *chaninfo, int parc, char **parv)
     if (IsOp(join)) {
       DeOp(join);
       putserv("%s " TOKEN_MODE " %s -o %s", bot.servnum, join, n->numeric);
-      putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -o %s par %s", os.num,
+      putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -o %s by %s", os.num,
         bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], num2servinfo(bot.servnum));
       continue;
     }
@@ -316,7 +316,7 @@ int xdehalf(aNick *nick, aChan *chaninfo, int parc, char **parv)
      if (IsHalf(join)) {
        DeHalf(join);
        putserv("%s " TOKEN_MODE " %s -h %s", bot.servnum, join, n->numeric);
-       putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -h %s par %s", os.num,
+       putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -h %s by %s", os.num,
          bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], num2servinfo(bot.servnum));
        continue;
      }
@@ -350,7 +350,7 @@ int xdevoice(aNick *nick, aChan *chaninfo, int parc, char **parv)
     if (IsVoice(join)) {
       DeVoice(join);
       putserv("%s " TOKEN_MODE " %s -v %s", bot.servnum, join, n->numeric);
-      putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -v %s par %s", os.num,
+      putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -v %s by %s", os.num,
         bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], num2servinfo(bot.servnum));
       continue;
     }
@@ -382,7 +382,7 @@ int xkick(aNick *nick, aChan *chaninfo, int parc, char **parv)
     return 1;
   }
   putserv("%s " TOKEN_KICK " %s %s :%s", bot.servnum, join, n->numeric, (parc < 3) ? defraison : msg);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037KICK\2\3 %s %s par %s (%s)", 
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037KICK\2\3 %s %s by %s (%s)", 
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], num2servinfo(bot.servnum), (parc < 3) ? defraison : msg);
   return 1;
 }
@@ -405,7 +405,7 @@ int xkill(aNick *nick, aChan *chan, int parc, char **parv)
     return 1;
   }
   putserv("%s " TOKEN_KILL " %s :%s (%s) [%s]", os.num, n->numeric, os.nick, msg, nick->nick);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 de %s par %s: %s [%s]", 
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 de %s by %s: %s [%s]", 
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, n->nick, os.nick, msg, nick->nick);
   del_nickinfo(n->numeric, "KILL");
   return 1;
@@ -906,7 +906,7 @@ int mkill(aNick *nick, aChan *chaninfo, int parc, char **parv)
       if((join = getjoininfo(n, parv[1])) && !IsAnAdmin(n->user) && !IsOper(n))
       {
         putserv("%s " TOKEN_KILL " %s :%s (%s) [%s]", os.num, n->numeric, os.nick, (parc < 2) ? defraison : msg, os.nick);
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 de %s : %s [%s]",
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] < \2\0037KILL\2\3 %s : %s [%s]",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, n->nick, (parc < 2) ? defraison : msg, os.nick);
         del_nickinfo(n->numeric, "KILL");
       }
@@ -938,7 +938,7 @@ int mkick(aNick *nick, aChan *chaninfo, int parc, char **parv)
       if((join = getjoininfo(n, parv[1])) && !IsAnAdmin(n->user) && !IsOper(n))
       {
         putserv("%s " TOKEN_KICK " %s %s :%s [%s]", bot.servnum, join, n->numeric, (parc < 2) ? defraison : msg, os.nick);
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037KICK\2\3 %s sur %s par %s -- Raison: %s [%s]",
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037KICK\2\3 %s from %s by %s -- Raison: %s [%s]",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, n->nick, parv[1], os.nick, (parc < 2) ? defraison : msg, os.nick);
       }
     }
@@ -967,7 +967,7 @@ int mop(aNick *nick, aChan *chaninfo, int parc, char **parv)
       {
         putserv("%s " TOKEN_MODE " %s +o %s", bot.servnum, parv[1], n->numeric);
         DoOp(join);
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +o %s par %s",
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +o %s by %s",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], n->nick, num2servinfo(bot.servnum));
       }
     }
@@ -1025,7 +1025,7 @@ int mvoice(aNick *nick, aChan *chaninfo, int parc, char **parv)
       {  
         putserv("%s " TOKEN_MODE " %s +v %s", bot.servnum, parv[1], n->numeric);
         DoVoice(join);
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +v %s par %s",
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +v %s by %s",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], n->nick, num2servinfo(bot.servnum));
       }
     }
@@ -1054,7 +1054,7 @@ int mdevoice(aNick *nick, aChan *chaninfo, int parc, char **parv)
       {
         putserv("%s " TOKEN_MODE " %s -v %s", bot.servnum, parv[1], n->numeric);
         DeVoice(join);
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -v %s par %s",
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -v %s by %s",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], n->nick, num2servinfo(bot.servnum));
       }
     }
@@ -1083,7 +1083,7 @@ int mhalf(aNick *nick, aChan *chaninfo, int parc, char **parv)
       {
         putserv("%s " TOKEN_MODE " %s +h %s", bot.servnum, parv[1], n->numeric);
         DoHalf(join);
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +h %s par %s",
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +h %s by %s",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], n->nick, num2servinfo(bot.servnum));
       }
     }
@@ -1112,7 +1112,7 @@ int mdehalf(aNick *nick, aChan *chaninfo, int parc, char **parv)
       {
         putserv("%s " TOKEN_MODE " %s -h %s", bot.servnum, parv[1], n->numeric);
         DeHalf(join);
-        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -h %s par %s",
+        putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -h %s by %s",
           os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], n->nick, num2servinfo(bot.servnum));
       }
     }
@@ -1168,7 +1168,7 @@ int closechan(aNick *nick, aChan *chaninfo, int parc, char **parv)
   strcat(msg, nick->user->nick);
 
   putserv("%s GL * +%s %d :%s", bot.servnum, host, tmp, msg);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037CLOSECHAN\2\3 %s -- Durée: %s -- Raison: %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037CLOSECHAN\2\3 %s -- Duration: %s -- Raison: %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, host, duration(tmp), msg);
   add_gline(host, CurrentTS + tmp, msg);
   return 1;
@@ -1190,7 +1190,7 @@ int xban(aNick *nick, aChan *chaninfo, int parc, char **parv)
   }
   mask = pretty_mask(parv[2]);
   putserv("%s " TOKEN_MODE " %s +b %s", bot.servnum, parv[1], mask);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +b %s par %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s +b %s by %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], mask, os.nick);
   return 1;
 }
@@ -1210,7 +1210,7 @@ int xunban(aNick *nick, aChan *chaninfo, int parc, char **parv)
     return 1;
   }
   putserv("%s " TOKEN_MODE " %s -b %s", bot.servnum, parv[1], parv[2]);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -b %s par %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s -b %s by %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], os.nick);
   return 1;
 }
@@ -1231,7 +1231,7 @@ int xmode(aNick *nick, aChan *chaninfo, int parc, char **parv)
   if(strchr(modes, 'l')) a++;
 
   putserv("%s " TOKEN_MODE " %s %s %s %s", bot.servnum, parv[1], modes, (a && parc > 2) ? parv[3] : "", (a > 1 && parc > 3) ? parv[4] : "");
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s %s %s par %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] = \2\0037MODE\2\3 %s %s %s %s by %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], modes, (a && parc > 2) ? parv[3] : "", (a > 1 && parc > 3) ? parv[4] : "", os.nick);
   return 1;
 }
@@ -1627,7 +1627,7 @@ int svsjoin(aNick *nick, aChan *chaninfo, int parc, char **parv)
     return osntc(nick, "%s n'est pas un nom de salon valide.", parv[1]);
 
   putserv("%s SJ %s %s", bot.servnum, n->numeric, parv[1]);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSJOIN\2\3 %s %s par %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSJOIN\2\3 %s %s by %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], os.nick);
   osntc(n, "Un administrateur vous force à rejoindre le salon %s.", parv[1]);
   return 1;
@@ -1652,7 +1652,7 @@ int svspart(aNick *nick, aChan *chaninfo, int parc, char **parv)
     return osntc(nick, "%s n'est pas un nom de salon valide.", parv[1]);
 
   putserv("%s SP %s %s", bot.servnum, n->numeric, parv[1]);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSPART\2\3 %s %s par %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSPART\2\3 %s %s by %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], os.nick);
   osntc(n, "Un administrateur vous force à sortir du salon %s.", parv[1]);
 
@@ -1673,7 +1673,7 @@ int svsnick(aNick *nick, aChan *chaninfo, int parc, char **parv)
     return osntc(nick, "%s est ircop.", parv[1]);
 
   putserv("%s "TOKEN_SVSNICK" %s :%s", bot.servnum, n->numeric, parv[2]);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSNICK\2\3 %s %s par %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSNICK\2\3 %s %s by %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], os.nick);
   osntc(n, "Un administrateur a changé votre pseudonyme en %s.", parv[2]);
   return 1;
@@ -1693,7 +1693,7 @@ int svshost(aNick *nick, aChan *chaninfo, int parc, char **parv)
     return osntc(nick, "%s est ircop.", parv[1]);
 
   putserv("%s SVSHOST %s %s", bot.servnum, n->numeric, parv[2]);
-  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSHOST\2\3 %s %s par %s",
+  putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037SVSHOST\2\3 %s %s by %s",
     os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1], parv[2], os.nick);
   osntc(n, "Un administrateur a changé votre hostname en %s.", parv[2]);
   return 1;

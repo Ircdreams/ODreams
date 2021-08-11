@@ -1,10 +1,10 @@
 /* src/hash_user.c - gestion des hash user
- * Copyright (C) 2004-2005 ircdreams.org
+ * Copyright (C) 2021 bugsounet.fr
  *
- * contact: bugs@ircdreams.org
- * site web: http://ircdreams.org
+ * contact: bugsounet@bugsounet.fr
+ * site web: http://bugsounet.fr
  *
- * Services pour serveur IRC. Supporté sur IrcDreams V.2
+ * Services pour serveur IRC. Supporté sur IrcDreams V.3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,7 +19,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * $Id: hash_user.c,v 1.5 2005/06/16 17:21:57 bugs Exp $
  */
 
 #include "main.h"
