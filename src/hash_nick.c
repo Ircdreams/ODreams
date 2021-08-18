@@ -32,9 +32,7 @@
 #include "del_info.h"
 #include "debug.h"
 #include "cs_cmds.h"
-#ifdef HAVE_TRACK
-#include "track.h"
-#endif
+
 #ifdef HAVE_CRYPTHOST
 #include "checksum.h"
 #endif
@@ -217,20 +215,11 @@ void del_nickinfo(const char *num, const char *event)
 
 	if(nick->user) /* sauvergarde du lastlogin */
 	{
-#ifdef HAVE_TRACK
-		if(UTracked(nick->user))
-			track_notify(nick->user, "%s/%s vient de quitter (%s).",
-				nick->nick, nick->user->nick, event);
-#endif
 		nick->user->lastseen = CurrentTS;
 		str_dup(&nick->user->lastlogin, GetNUHbyNick(nick, 0));
 		if(IsAdmin(nick->user)) adm_active_del(nick);
 		nick->user->n = NULL;
 	}
-
-#ifdef USE_NICKSERV
-	if(NHasKill(nick)) kill_remove(nick); /* purge de tous ses kills */
-#endif
 
 	num_tab[servindex][userindex] = NULL; /* tab des num purgée */
 	hash_delnick(nick); /* swap du nick dans la hash table */

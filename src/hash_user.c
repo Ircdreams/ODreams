@@ -1,10 +1,6 @@
 /* src/hash_user.c - gestion des hash user
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -36,9 +32,6 @@
 #include <ctype.h>
 #include "timers.h"
 #include "data.h"
-#ifdef HAVE_TRACK
-#include "track.h"
-#endif
 
 static anUser *mail_tab[USERHASHSIZE];
 static anUser *userid_tab[USERHASHSIZE];
@@ -195,19 +188,6 @@ anUser *add_regnick(const char *user, const char *pass, time_t lastseen, time_t 
 void del_regnick(anUser *user, int flag, const char *raison)
 {
 	anAccess *acces, *acces_t;
-#ifdef USE_MEMOSERV
-	aMemo *memo = user->memohead, *mem;
-#endif
-#ifdef HAVE_TRACK
-	struct track *track;
-
-	if(UTracked(user) && (track = istrack(user)))
-	{
-		csntc(track->tracker, "[\2Track\2] L'UserName %s que vous trackez vient d'être supprimé.",
-			user->nick);
-		del_track(track);
-	}
-#endif
 
 	for(acces = user->accesshead; acces; acces = acces_t)
 	{
@@ -215,13 +195,6 @@ void del_regnick(anUser *user, int flag, const char *raison)
 		if(AOwner(acces)) del_chan(acces->c, flag|HF_LOG, raison);
 		else del_access(user, acces->c);
 	}
-#ifdef USE_MEMOSERV
-	for(; memo; memo = mem)
-	{
-		mem = memo->next;
-		free(memo);
-	}
-#endif
 
  	if(flag & HF_LOG)
 		log_write(LOG_UCMD, 0, "purge %s (%d)", user->nick, CurrentTS - user->lastseen);

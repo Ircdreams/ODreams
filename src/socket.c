@@ -1,10 +1,6 @@
 /* src/socket.c - Gestion des sockets & parse
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -42,9 +38,6 @@
 #include <sys/time.h>
 #include <sys/socket.h>
 #include <fcntl.h>
-#ifdef WEB2CS
-#include "web2cs.h"
-#endif
 
 static fd_set global_fd_set;
 static int highsock = 0;
@@ -211,9 +204,6 @@ void socket_unregister(int fd)
 void socket_init(void)
 {
 	FD_ZERO(&global_fd_set);
-#ifdef WEB2CS
-	w2c_initsocket();
-#endif
 }
 
 void init_bot(void)
@@ -315,27 +305,6 @@ int run_bot(void)
 				if(events == 1) continue;
 			} /* IRC event */
 
-#ifdef WEB2CS
-			for(i = 0; i <= highsock; ++i)
-			{
-				if(!FD_ISSET(i, &tmp_fdset)) continue;
-
-				else if(i == bind_sock)
-				{
-					struct sockaddr_in newcon;
-					unsigned int addrlen = sizeof newcon;
-					int newfd = accept(bind_sock, (struct sockaddr *) &newcon, &addrlen);
-
-					if(newfd < 0) log_write(LOG_SOCKET, 0, "accept(%s) failed: %s",
-									inet_ntoa(newcon.sin_addr), strerror(errno));
-
-					else if(!w2c_addclient(newfd, &newcon.sin_addr)) close(newfd);
-				}
-
-				else w2c_handle_read(i);
-
-			} /* for(highsock) */
-#endif /* WEB2CS */
 		} /* select() */
 	} /* end main loop */
 

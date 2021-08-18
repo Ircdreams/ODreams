@@ -1,12 +1,9 @@
 /* src/add_info.c - Ajout d'informations en mémoire
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,31 +66,6 @@ int add_server(const char *name, const char *num, const char *hop,
 	return 0;
 }
 
-#ifdef USE_MEMOSERV
-void add_memo(anUser *nick, const char *de, time_t date, const char *message, int flag)
-{
-	aMemo *memo = calloc(1, sizeof *memo), *tmp = nick->memotail;
-
-	if(!memo)
-	{
-		Debug(W_MAX, "add_memo, malloc a échoué pour aMemo %s (%s)", nick->nick, message);
-		return;
-	}
-
-	Strncpy(memo->de, de, NICKLEN);
-	memo->date = date;
-	memo->flag = flag;
-	Strncpy(memo->message, message, MEMOLEN);
-
-	memo->next = NULL;
-	memo->last = tmp;
-
-	if(!nick->memohead) nick->memohead = memo;
-	if(tmp) tmp->next = memo;
-	nick->memotail = memo;
-}
-#endif
-
 anAccess *add_access(anUser *user, const char *chan, int level, int flag, time_t lastseen)
 {
 	anAccess *ptr = calloc(1, sizeof *ptr);
@@ -130,28 +102,6 @@ anAccess *add_access(anUser *user, const char *chan, int level, int flag, time_t
 	if(AOwner(ptr)) c->owner = ptr;
 	return ptr;
 }
-
-#ifdef USE_NICKSERV
-void add_killinfo(aNick *nick, enum TimerType type)
-{
-	aKill *k = malloc(sizeof *k);
-
-	if(!k)
-	{
-		Debug(W_MAX|W_WARN, "add_killinfo, malloc a échoué pour aKill %s", nick->nick);
-		return;
-	}
-
-	k->nick = nick;
-	k->type = type;
-	nick->timer = timer_add(cf_kill_interval, TIMER_RELATIF, callback_kill, k, NULL);
-
-	k->last = NULL;
-	if(killhead) killhead->last = k;
-	k->next = killhead;
-	killhead = k;
-}
-#endif
 
 void add_join(aNick *nick, const char *chan, int status, time_t timestamp, aNChan *netchan)
 {
@@ -219,9 +169,6 @@ void add_join(aNick *nick, const char *chan, int status, time_t timestamp, aNCha
 	else a = NULL;
 
 	if(status & J_BURST) return; /* it's a Burst, nothing more to do.. */
-
-	if(CSetWelcome(c) && *c->welcome) /* send welcome if needed */
-		csreply(nick, GetReply(nick, L_WELCOMEJOIN), c->chan, c->welcome);
 
 	if(!a) /* he has no access, and it's outside a burst */
 	{	/* if he had created this channel because I wasn't in, he doesn't deserve its +o */

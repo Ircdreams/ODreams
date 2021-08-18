@@ -1,10 +1,6 @@
 /* src/fichiers.c - Lecture, parsage, distribution de la conf
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -22,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * $Id: config.c,v 1.44 2008/01/05 01:24:13 romexzf Exp $
  */
 
 #include "main.h"
@@ -30,10 +25,6 @@
 #include "outils.h"
 #include "mylog.h"
 #include <unistd.h>
-#ifdef WEB2CS
-#include <arpa/inet.h>
-#include "web2cs.h"
-#endif
 
 int ConfFlag = 0;
 
@@ -61,12 +52,7 @@ char cf_defraison[RAISONLEN + 1];
 #define conf_error(fmt, arg) printf("conf:%d tab %s, " fmt "\n", line, curtab->item, (arg))
 #define conf_error2(fmt, a, b) printf("conf:%d tab %s, " fmt "\n", line, curtab->item, (a), (b))
 
-enum conf_id {CONF_UPLINK = 0, CONF_CSBOT, CONF_MYSERV, CONF_MISC, CONF_LANG, CONF_LOG,
-#	ifdef WEB2CS
-			CONF_W2C,
-#	endif
-			CONF_IREAD
-};
+enum conf_id {CONF_UPLINK = 0, CONF_CSBOT, CONF_MYSERV, CONF_MISC, CONF_LANG, CONF_LOG, CONF_IREAD };
 
 struct conf_item {
 	enum conf_id tabid;
@@ -99,9 +85,6 @@ static struct conf_tab {
 	{"misc_conf", "configuration des diverses options (On The Fly!) des Services", CONF_MISC},
 	{"lang", "configuration du multilangage", CONF_LANG},
 	{"log", "configuration du système de log", CONF_LOG},
-#ifdef WEB2CS
-	{"web2cs", "configuration du web2cs", CONF_W2C},
-#endif
 };
 
 static int cf_validnick(struct conf_item *i, char *buf)
@@ -199,17 +182,6 @@ static int cf_log_handle(struct conf_item *i, char *buf)
 	return 1;
 }
 
-#ifdef WEB2CS
-static int cf_addw2chost(struct conf_item *i, char *buf)
-{
-	w2c_hallow *hnew = malloc(sizeof *hnew);
-	hnew->host = inet_addr((char *) i->ptr); /* ip */
-	hnew->next = w2c_hallowhead; /* add trust to list */
-	w2c_hallowhead = hnew;
-	return 1;
-}
-#endif
-
 struct conf_item conf_items[] = {
 	/* uplink */
 	{CONF_UPLINK, CONF_IP|CONF_TARRAY, CONF_MARRAY(bot.ip), "ip",
@@ -288,24 +260,6 @@ struct conf_item conf_items[] = {
 	{CONF_LOG, CONF_TPRIV, NULL, 0, "main", "", cf_log_handle},
 	{CONF_LOG, CONF_TPRIV|CONF_READ, NULL, 0, "socket", "", cf_log_handle},
 	{CONF_LOG, CONF_TPRIV|CONF_READ, NULL, 0, "db", "", cf_log_handle},
-	{CONF_LOG, CONF_TPRIV|CONF_READ, NULL, 0, "raw", "", cf_log_handle},
-#	ifdef HAVE_VOTE
-	{CONF_LOG, CONF_TPRIV|CONF_READ, NULL, 0, "vote", "", cf_log_handle},
-#	endif
-#	ifdef WEB2CS
-	{CONF_LOG, CONF_TPRIV|CONF_READ, NULL, 0, "W2C", "", cf_log_handle},
-	{CONF_LOG, CONF_TPRIV|CONF_READ, NULL, 0, "W2C_cmd", "", cf_log_handle},
-	{CONF_LOG, CONF_TPRIV|CONF_READ, NULL, 0, "W2C_raw", "", cf_log_handle},
-#	endif
-
-#ifdef WEB2CS
-	/* Web2CS */
-	{CONF_W2C, CONF_TINT|CONF_PORT, &bot.w2c_port, 0, "port", "Port du serveur web2cs", NULL},
-	{CONF_W2C, CONF_TPRIV|CONF_IP, NULL, 0, "allow_host",
-		"IP autorisée à se connecter au serveur web2cs", cf_addw2chost},
-	{CONF_W2C, CONF_TARRAY, CONF_MARRAY(bot.w2c_pass), "pass",
-		"Pass que délivrera le php pour se connecter (non crypté)", NULL},
-#endif
 
 };
 
@@ -368,13 +322,6 @@ static int readconf(FILE *fp)
 	struct conf_item *citem = NULL;
 	char buf[512], vreason[CF_REASONLEN + 1];
 	struct conf_tab *curtab = NULL;
-
-#ifdef WEB2CS
-	w2c_hallow *hnew = w2c_hallowhead, *hnext;
-	/* Avoid doublons in case of rehash */
-	for(; hnew; free(hnew), hnew = hnext) hnext = hnew->next;
-	w2c_hallowhead = NULL;
-#endif
 
 	log_clean(1); /* Close log files & reset flags */
 

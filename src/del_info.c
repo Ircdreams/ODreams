@@ -1,12 +1,9 @@
 /* src/del_info.c - Suppression d'informations en mémoire
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,27 +51,6 @@ void del_access(anUser *user, aChan *chan)
 			break;
 		}
 }
-
-#ifdef USE_NICKSERV
-int kill_remove(aNick *nick)
-{
-	if(!nick->timer)
-		return Debug(W_DESYNCH|W_WARN, "kill_remove: Timer NULL pour %s", nick->nick);
-	timer_dequeue(nick->timer); 	/* remove timer from list */
-	kill_free(nick->timer->data1); 	/* remove and free kill */
-	timer_free(nick->timer); 		/* finally free timer's data */
-	nick->timer = NULL;
-	return 0;
-}
-
-void kill_free(aKill *kill) /* remove from killlist then free */
-{
-	if(kill->next) kill->next->last = kill->last;
-	if(kill->last) kill->last->next = kill->next;
-	else killhead = kill->next;
-	free(kill);
-}
-#endif
 
 void del_link(aNChan *chan, aLink *link)
 {

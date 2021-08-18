@@ -1,12 +1,9 @@
 /* src/admin_manage.c - commandes pr gerer les admins
  *
- * Copyright (C) 2002-2006 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@ir3.org>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,9 +26,6 @@
 #include "outils.h"
 #include "cs_cmds.h"
 #include "hash.h"
-#ifdef HAVE_TRACK
-#include "track.h"
-#endif
 
 aNick **adminlist = NULL;
 int adminmax = 0;
@@ -53,10 +47,6 @@ int adm_active_del(aNick *nick)
 {
 	int i = 0;
 
-#ifdef HAVE_TRACK
-	track_admin_quit(nick);
-#endif
-
 	while(i < adminmax && adminlist[i] != nick) ++i; /* searching in list.. */
 	if(i < adminmax) adminlist[i] = NULL; /* free the slot */
 	return 0;
@@ -70,9 +60,6 @@ int admin_level(aNick *nick, aChan *chan, int parc, char **parv)
 {
 	anUser *user;
 	int level;
-#ifdef USE_MEMOSERV
-	char memo[MEMOLEN + 1] = {0};
-#endif
 
 	if(!Strtoint(parv[2], &level, 1, MAXADMLVL))
 		return csreply(nick, GetReply(nick, L_VALIDLEVEL));
@@ -92,26 +79,16 @@ int admin_level(aNick *nick, aChan *chan, int parc, char **parv)
 	if(level < ADMINLEVEL)
 	{
 		csreply(nick, "%s n'est plus Administrateur.", user->nick);
-#ifdef USE_MEMOSERV
-		if(!user->n) mysnprintf(memo, MEMOLEN, "Votre accès Administrateur a été supprimé par %s.",
-						nick->user->nick);
-#endif
 		if(user->n) adm_active_del(user->n);
 	}
 	else if(user->level < ADMINLEVEL)
 	{
 		csreply(nick, "%s est maintenant Administrateur au niveau\2 %d\2.", user->nick, level);
-#ifdef USE_MEMOSERV
-		if(!user->n) mysnprintf(memo, MEMOLEN, "%s vous a nommé Administrateur.", nick->user->nick);
-#endif
 		if(user->n) adm_active_add(user->n);
 	}
 	else csreply(nick, "Vous avez modifié le niveau Administrateur de \2%s\2 en\2 %d\2.",
 			user->nick, level);
 
-#ifdef USE_MEMOSERV
-	if(!user->n && *memo) add_memo(user, "Services", CurrentTS, memo, MEMO_AUTOEXPIRE);
-#endif
 	user->level = level;
 	return 1;
 }

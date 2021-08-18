@@ -1,12 +1,9 @@
 /* src/userinfo.c - Affiche les infos détaillées d'un username
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,30 +26,22 @@
 #include "cs_cmds.h"
 #include "data.h"
 #include "userinfo.h"
-#ifdef HAVE_VOTE
-#include "vote.h"
-#endif
 
 static char *GetUserOptions(anUser *user)
 {	 /* last '15' is langsize, 1 is \0 */
-	static char option[8+9+7+12+6+9+12+12+7+9+17+19+15+15+1];
+	static char option[8+9+12+6+9+12+12+9+17+19+15+15+1];
 	int i = 0;
 	option[0] = '\0';
 
 	if(UNopurge(user)) strcpy(option, "NoPurge "), i += 8;
 	if(USuspend(user)) strcpy(option + i, "Suspendu "), i += 9;
-	if(UNoMemo(user)) strcpy(option + i, "NoMemo "), i += 7;
 	if(UFirst(user)) strcpy(option + i, "Registering "), i += 12;
 	if(UOubli(user)) strcpy(option + i, "Oubli "), i += 6;
 	if(UWantX(user)) strcpy(option + i, "AutoHide "), i += 9;
 	if(UChanged(user)) strcpy(option + i, "UserChanged "), i += 12;
 	if(UCantRegChan(user)) strcpy(option + i, "CantRegChan "), i += 12;
-	if(UNoVote(user)) strcpy(option + i, "NoVote "), i += 7;
 	if(UPMReply(user)) strcpy(option + i, "ReplyMsg "), i += 9;
-#ifdef USE_NICKSERV
-	if(UPKill(user)) strcpy(option + i, "Protection(Kill) "), i += 17;
-	else if(UPNick(user)) strcpy(option + i, "Protection(ChNick) "), i += 19;
-#endif
+
 	if(UPReject(user)) strcpy(option + i, "Accès(Rejet) "), i += 13;
 	else if(UPAsk(user)) strcpy(option + i, "Accès(Ask) "), i += 11;
 	else if(UPAccept(user)) strcpy(option + i, "Accès(Accepte) "), i += 15;
@@ -119,9 +108,5 @@ int show_userinfo(aNick *nick, anUser *user, int flag)
 	if(user->cantregchan) show_cantregchan(nick, user);
 	if(user->nopurge) show_nopurge(nick, user);
 
-#ifdef HAVE_VOTE
-	if(!flag && CanVote(user))
-		csreply(nick, " Vous n'avez pas encore voté pour: %s", vote[0].prop);
-#endif
 	return 0;
 }

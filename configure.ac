@@ -1,7 +1,4 @@
 # configure.ac
-# Copyright (C) 2002-2005 David Cortier  <Cesar@ircube.org>
-#                         Romain Bignon  <Progs@ir3.org>
-#                         Benjamin Beret <kouak@kouak.org>
 #
 # ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
 # site web: http://www.ircdreams.org
@@ -22,7 +19,6 @@
 # along with this program; if not, write to the Free Software
 # Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 #
-# $Id: configure.ac,v 1.16 2006/01/15 18:43:45 progs Exp $
 
 AC_PREREQ(2.59)
 AC_INIT(ODreams, 2.0, http://www.bugsounet.fr)

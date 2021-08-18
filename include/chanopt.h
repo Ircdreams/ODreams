@@ -1,12 +1,10 @@
 /* include/chanopt.h
  * Copyright (C) 2002-2003 Inter System
  *
- * contact: Progs@Inter-System.Net
- *          Cesar@Inter-System.Net
- *          kouak@kouak.org
- * site web: http://coderz.inter-system.net
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * Services pour serveur IRC. Supporté sur IrcProgs et IrCoderZ
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,11 +30,9 @@ extern int locktopic(aNick *, aChan *, int, char **);
 extern int strictop(aNick *, aChan *, int, char **);
 extern int nobans(aNick *, aChan *, int, char **);
 extern int noops(aNick *, aChan *, int, char **);
-extern int activwelcome(aNick *, aChan *, int, char **);
 extern int deftopic(aNick *, aChan *, int, char **);
 extern int defmodes(aNick *, aChan *, int, char **);
 extern int description(aNick *, aChan *, int, char **);
-extern int csetwelcome(aNick *, aChan *, int, char **);
 extern int banlevel(aNick *, aChan *, int, char **);
 extern int bantype(aNick *, aChan *, int, char **);
 extern int define_motd(aNick *, aChan *, int, char **);

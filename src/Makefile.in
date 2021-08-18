@@ -1,10 +1,6 @@
 # src/Makefile.in
 
-# Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
-#                         Romain Bignon  <Progs@coderz.info>
-#                         Benjamin Beret <kouak@kouak.org>
-#
-# SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+# ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
 # site web: http://www.ircdreams.org
 #
 # Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -79,12 +75,11 @@ INCLUDES = -I../include
 INCLUDES_DIR = ../include
 DEFS = -I$(srcdir)
 sdreams_SOURCES = main.c mystring.c outils.c cs_cmds.c serveur.c fichiers.c add_info.c del_info.c mylog.c \
-		 config.c lang.c mkpasswd.c showcommands.c checksum.c memoserv.c nickserv.c \
+		 config.c lang.c mkpasswd.c showcommands.c checksum.c nickserv.c \
 		 hash.c hash_chan.c socket.c hash_cmd.c hash_user.c hash_nick.c data.c dnr.c \
 		 divers.c aide.c admin_cmds.c admin_manage.c admin_user.c admin_chan.c \
-		 cs_register.c chanserv.c match.c welcome.c opdeop.c moduser.c chanopt.c \
-		 chaninfo.c userinfo.c debug.c ban.c template.c timers.c flood.c track.c vote.c \
- 		 web2cs-engine.c web2cs-commands.c
+		 cs_register.c chanserv.c match.c opdeop.c moduser.c chanopt.c \
+		 chaninfo.c userinfo.c debug.c ban.c template.c timers.c flood.c
 convertdb_SOURCES = convertdb.c mystring.c
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -302,11 +297,11 @@ admin_cmds.o: admin_cmds.c ../include/main.h ../include/mystring.h \
   ../include/outils.h ../include/cs_cmds.h ../include/token.h \
   ../include/fichiers.h ../include/add_info.h ../include/aide.h \
   ../include/showcommands.h ../include/hash.h ../config.h \
-  ../include/template.h ../include/timers.h ../include/welcome.h
+  ../include/template.h ../include/timers.h
 admin_manage.o: admin_manage.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/add_info.h ../include/outils.h ../include/cs_cmds.h \
-  ../include/token.h ../include/hash.h ../include/track.h
+  ../include/token.h ../include/hash.h
 admin_user.o: admin_user.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/outils.h ../include/hash.h ../include/cs_cmds.h \
@@ -342,7 +337,7 @@ checksum.o: checksum.c ../include/main.h ../include/mystring.h \
   ../include/checksum.h
 config.o: config.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../config.h ../include/outils.h ../include/mylog.h ../include/web2cs.h
+  ../config.h ../include/outils.h ../include/mylog.h
 convertdb.o: convertdb.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/hash.h ../include/fichiers.h
@@ -388,7 +383,7 @@ fichiers.o: fichiers.c ../include/main.h ../include/mystring.h \
   ../include/fichiers.h ../include/outils.h ../config.h ../include/hash.h \
   ../include/debug.h ../include/dnr.h ../include/mylog.h \
   ../include/cs_cmds.h ../include/token.h ../include/add_info.h \
-  ../include/data.h ../include/vote.h ../include/welcome.h
+  ../include/data.h
 flood.o: flood.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/cs_cmds.h ../include/token.h ../config.h ../include/timers.h \
@@ -410,13 +405,13 @@ hash_nick.o: hash_nick.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/outils.h ../include/admin_manage.h ../include/hash.h \
   ../include/del_info.h ../include/debug.h ../include/cs_cmds.h \
-  ../include/token.h ../include/track.h ../include/checksum.h
+  ../include/token.h ../include/checksum.h
 hash_user.o: hash_user.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/hash.h ../include/debug.h ../include/outils.h \
   ../include/mylog.h ../include/fichiers.h ../include/del_info.h \
   ../include/cs_cmds.h ../include/token.h ../include/timers.h \
-  ../include/data.h ../include/track.h
+  ../include/data.h
 lang.o: lang.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/outils.h ../include/debug.h
@@ -431,13 +426,8 @@ main.o: main.c ../include/main.h ../include/mystring.h \
   ../include/cs_register.h ../include/cs_cmds.h ../include/token.h \
   ../include/timers.h ../include/socket.h ../include/ban.h \
   ../include/dnr.h ../include/flood.h ../include/template.h \
-  ../include/version.h ../include/track.h ../include/vote.h \
-  ../include/memoserv.h ../include/welcome.h ../include/web2cs.h
+  ../include/version.h
 match.o: match.c
-memoserv.o: memoserv.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/hash.h ../include/outils.h ../include/cs_cmds.h \
-  ../include/token.h ../include/add_info.h ../include/memoserv.h
 mkpasswd.o: mkpasswd.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/crypt.h ../include/checksum.h ../include/debug.h
@@ -458,9 +448,8 @@ nickserv.o: nickserv.c ../include/main.h ../include/mystring.h \
   ../include/chanserv.h ../include/outils.h ../include/mylog.h \
   ../include/cs_cmds.h ../include/token.h ../include/add_info.h \
   ../include/del_info.h ../config.h ../include/fichiers.h \
-  ../include/aide.h ../include/data.h ../include/dnr.h ../include/vote.h \
-  ../include/memoserv.h ../include/track.h ../include/nickserv.h \
-  ../include/crypt.h ../include/template.h
+  ../include/aide.h ../include/data.h ../include/dnr.h \
+  ../include/nickserv.h ../include/crypt.h ../include/template.h
 opdeop.o: opdeop.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/opdeop.h ../include/cs_cmds.h ../include/token.h \
@@ -475,8 +464,7 @@ serveur.o: serveur.c ../include/main.h ../include/mystring.h \
   ../include/admin_manage.h ../include/hash.h ../include/flood.h \
   ../include/cs_cmds.h ../include/token.h ../config.h \
   ../include/del_info.h ../include/debug.h ../include/mylog.h \
-  ../include/aide.h ../include/timers.h ../include/memoserv.h \
-  ../include/welcome.h ../include/track.h
+  ../include/aide.h ../include/timers.h
 showcommands.o: showcommands.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/outils.h ../include/cs_cmds.h ../include/token.h \
@@ -485,8 +473,7 @@ socket.o: socket.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/outils.h ../include/serveur.h ../include/socket.h \
   ../include/hash.h ../include/mylog.h ../include/cs_cmds.h \
-  ../include/token.h ../include/add_info.h ../include/timers.h \
-  ../include/web2cs.h
+  ../include/token.h ../include/add_info.h ../include/timers.h
 template.o: template.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/lang.h ../include/debug.h ../config.h
@@ -495,34 +482,10 @@ timers.o: timers.c ../include/main.h ../include/mystring.h \
   ../config.h ../include/outils.h ../include/hash.h ../include/del_info.h \
   ../include/fichiers.h ../include/cs_cmds.h ../include/token.h \
   ../include/debug.h ../include/timers.h ../include/mylog.h
-track.o: track.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/timers.h ../include/track.h ../include/cs_cmds.h \
-  ../include/token.h ../include/hash.h ../include/outils.h \
-  ../include/debug.h
 userinfo.o: userinfo.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/outils.h ../include/cs_cmds.h ../include/token.h \
-  ../include/data.h ../include/vote.h
-vote.o: vote.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/vote.h ../include/cs_cmds.h ../include/token.h \
-  ../include/fichiers.h ../include/mylog.h ../include/hash.h \
-  ../include/outils.h ../include/timers.h
-web2cs-commands.o: web2cs-commands.c ../include/main.h \
-  ../include/mystring.h ../include/../config.h ../include/lang.h \
-  ../include/structs.h ../include/web2cs-engine.h ../include/hash.h \
-  ../include/outils.h ../include/cs_cmds.h ../include/token.h \
-  ../include/del_info.h ../include/add_info.h ../include/crypt.h \
-  ../include/dnr.h ../include/memoserv.h ../include/data.h ../include/mylog.h
-web2cs-engine.o: web2cs-engine.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/web2cs.h ../include/web2cs-engine.h \
-  ../include/web2cs-commands.h ../include/socket.h ../include/mylog.h
-welcome.o: welcome.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/cs_cmds.h ../include/token.h ../include/debug.h \
-  ../include/mylog.h ../config.h ../include/outils.h ../include/welcome.h
+  ../include/data.h
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

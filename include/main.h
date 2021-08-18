@@ -1,10 +1,6 @@
 /* include/main.h - Déclarations principales
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -43,14 +39,7 @@
 /*#define OLDADMINLIST*/
 /*#define HAVE_IPV6*/
 
-#ifdef WEB2CS
-#	define SPVERSION "2.0.0-DEV(Web)"
-#	ifdef USEBSD
-#		include <sys/select.h>
-#	endif
-#else
-#	define SPVERSION "2.0.0-DEV"
-#endif
+#define SPVERSION "2.0.0-DEV"
 
 #define NNICK "AA"
 #define CTCP_DELIM_CHAR '\001'
@@ -149,34 +138,20 @@
 #define DelNRegister(x)	 ((x)->flag &= ~N_REGISTER)
 #define NHasKill(x)  	 ((x)->timer)
 
-#ifdef USE_NICKSERV
-#define UPKill(x)	 ((x)->flag & U_PKILL)
-#define UPNick(x)	 ((x)->flag & U_PNICK)
-#define SetUPKill(x)	 ((x)->flag |= U_PKILL)
-#define SetUPNick(x)	 ((x)->flag |= U_PNICK)
-#define DelUPKill(x)	 ((x)->flag &= ~U_PKILL)
-#define DelUPNick(x)	 ((x)->flag &= ~U_PNICK)
-#define IsProtected(x)	 ((x)->flag & (U_PNICK | U_PKILL))
-#endif /* USE_NICKSERV */
-
 #define USuspend(x)	 	((x)->flag & U_SUSPEND)
 #define UWantX(x)	 	((x)->flag & U_WANTX)
 #define UNopurge(x)	 	((x)->flag & U_NOPURGE)
 #define UOubli(x)	 	((x)->flag & U_OUBLI)
 #define UFirst(x)	 	((x)->flag & U_FIRST)
-#define UNoMemo(x)	 	((x)->flag & U_NOMEMO)
 #define UIsBusy(x) 	 	((x)->flag & U_ADMBUSY)
 #define UMD5(x)		 	((x)->flag & U_MD5PASS)
 #define UPReject(x) 	((x)->flag & U_PREJECT)
 #define UPAccept(x) 	((x)->flag & U_PACCEPT)
 #define UPAsk(x) 		((x)->flag & U_POKACCESS)
-#define UVote(x) 		((x)->flag & U_HASVOTE)
-#define UNoVote(x) 		((x)->flag & U_NOVOTE)
 #define UPMReply(x) 	((x)->flag & U_PMREPLY)
 #define UChanged(x) 	((x)->flag & U_ALREADYCHANGE)
 #define UCantRegChan(x) ((x)->flag & U_CANTREGCHAN)
 #define UCantRegChan(x) ((x)->flag & U_CANTREGCHAN)
-#define UTracked(x) 	((x)->flag & U_TRACKED)
 
 #define SetUSuspend(x) 		((x)->flag |= U_SUSPEND)
 #define SetUChanged(x) 	 	((x)->flag |= U_ALREADYCHANGE)
@@ -184,24 +159,17 @@
 #define SetUNopurge(x)		((x)->flag |= U_NOPURGE)
 #define SetUOubli(x)	 	((x)->flag |= U_OUBLI)
 #define SetUFirst(x)	 	((x)->flag |= U_FIRST)
-#define SetUNoMemo(x)	 	((x)->flag |= U_NOMEMO)
 #define SetUMD5(x)	 	 	((x)->flag |= U_MD5PASS)
-#define SetUVote(x)	 	 	((x)->flag |= U_HASVOTE)
 #define SetUCantRegChan(x)  ((x)->flag |= U_CANTREGCHAN)
-#define SetUTracked(x) 		((x)->flag |= U_TRACKED)
 
 #define DelUSuspend(x)	 	((x)->flag &= ~U_SUSPEND)
 #define DelUWantX(x)	 	((x)->flag &= ~U_WANTX)
 #define DelUNopurge(x)	 	((x)->flag &= ~U_NOPURGE)
 #define DelUOubli(x)	 	((x)->flag &= ~U_OUBLI)
 #define DelUFirst(x)	 	((x)->flag &= ~U_FIRST)
-#define DelUNoMemo(x)	 	((x)->flag &= ~U_NOMEMO)
-#define DelUVote(x) 	 	((x)->flag &= ~U_HASVOTE)
 #define DelUChanged(x) 	 	((x)->flag &= ~U_ALREADYCHANGE)
 #define DelUCantRegChan(x) 	((x)->flag &= ~U_CANTREGCHAN)
-#define DelUTracked(x) 		((x)->flag &= ~U_TRACKED)
 
-#define CSetWelcome(x)		((x)->flag & C_SETWELCOME)
 #define CJoined(x)			((x)->flag & C_JOINED)
 #define CStrictOp(x)		((x)->flag & C_STRICTOP)
 #define CLockTopic(x)		((x)->flag & C_LOCKTOPIC)
@@ -213,7 +181,6 @@
 #define CNoInfo(x) 			((x)->flag & C_NOINFO)
 #define CNoVoices(x)		((x)->flag & C_NOVOICES)
 #define CSuspend(x) 		((x)->flag & C_SUSPEND)
-#define SetCSetWelcome(x)	((x)->flag |= C_SETWELCOME)
 #define SetCJoined(x)		((x)->flag |= C_JOINED)
 #define SetCStrictOp(x)		((x)->flag |= C_STRICTOP)
 #define SetCLockTopic(x)	((x)->flag |= C_LOCKTOPIC)
@@ -224,7 +191,6 @@
 #define SetCNoVoices(x)		((x)->flag |= C_NOVOICES)
 #define SetCSuspend(x)		((x)->flag |= C_SUSPEND)
 
-#define DelCSetWelcome(x)	((x)->flag &= ~C_SETWELCOME)
 #define DelCJoined(x)		((x)->flag &= ~C_JOINED)
 #define DelCStrictOp(x)		((x)->flag &= ~C_STRICTOP)
 #define DelCLockTopic(x)	((x)->flag &= ~C_LOCKTOPIC)
@@ -269,11 +235,6 @@
 
 /* global vars */
 
-#ifdef USE_WELCOMESERV
-extern struct bots ws;
-extern char user_motd[];
-extern char admin_motd[];
-#endif
 extern struct robot bot;
 extern struct bots cs;
 
@@ -287,10 +248,6 @@ extern aNick *nick_tab[];
 
 extern int running;
 extern time_t CurrentTS;
-
-#ifdef USE_NICKSERV
-extern aKill *killhead;
-#endif
 
 extern Lang *DefaultLang;
 
@@ -309,7 +266,6 @@ static inline char *GetUReply(anUser *user, int msgid)
 /* A METTRE SOUS LA FORME: #define U|C_DEFAULT (FLAG1 | FLAG2 | ... FLAGn) */
 
 /* Salons
-	C_SETWELCOME 	envoi du welcome
 	C_STRICTOP 		ops avec accès seulement
 	C_LOCKTOPIC		topic bloqué
 	C_NOBANS		pas de bans possibles
@@ -333,7 +289,6 @@ static inline char *GetUReply(anUser *user, int msgid)
 	U_PNICK		protection par chnick
 	U_NOPURGE 	non concerné par l'expiration auto
 	U_WANTX		auto +x au login
-	U_NOMEMO	rejette les mémos
 
 	1 parmi les 3 suivants pour la politique vis à vis des accès
 	U_PREJECT	rejette

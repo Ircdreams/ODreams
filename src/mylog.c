@@ -1,10 +1,6 @@
 /* src/mylog.c - Système de log
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -56,16 +52,6 @@ static struct LogSys {
 	{LOG_SOCKET, 	"socket", 	0, NULL},
 	{LOG_DB, 		"db", 		0, NULL},
 	{LOG_RAW, 		"RAW", 		0, NULL},
-
-#ifdef HAVE_VOTE
-	{LOG_VOTE, 		"vote", 	0, NULL},
-#endif
-
-#ifdef WEB2CS
-	{LOG_W2C, 		"W2C", 		0, NULL},
-	{LOG_W2CCMD, 	"W2C_cmd", 	0, NULL},
-	{LOG_W2CRAW, 	"W2C_raw", 	0, NULL},
-#endif
 };
 
 #define logsys_bytype(x) 	(&LogSystems[(x)])

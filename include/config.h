@@ -1,12 +1,9 @@
 /* include/config.h
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,8 +35,7 @@ extern int ConfFlag;
 #define CF_KILLFORFLOOD 0x004
 #define CF_NOKILL 		0x008
 #define CF_HOSTHIDING 	0x010
-#define CF_WELCOME 		0x020
-#define CF_PRIVWELCOME 	0x040
+
 #define CF_NOMAIL	 	0x080
 #define CF_NOREG 		0x100
 #define CF_PREMIERE 	0x200

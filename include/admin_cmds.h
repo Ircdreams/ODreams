@@ -1,12 +1,9 @@
 /* include/admin_cmds.h
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,9 +33,5 @@ extern int disable_cmd(aNick *, aChan *, int, char **);
 extern int globals_cmds(aNick *, aChan *, int, char **);
 extern int rehash_conf(aNick *, aChan *, int, char **);
 extern int showconfig(aNick *, aChan *, int, char **);
-
-#ifdef USE_WELCOMESERV
-extern int set_motds(aNick *, aChan *, int, char **);
-#endif
 
 #endif /*admincmds*/

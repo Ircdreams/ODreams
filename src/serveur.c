@@ -40,15 +40,7 @@
 #include "aide.h"
 #include "timers.h"
 #include <sys/time.h>
-#ifdef USE_MEMOSERV
-#include "memoserv.h"
-#endif
-#ifdef USE_WELCOMESERV
-#include "welcome.h"
-#endif
-#ifdef HAVE_TRACK
-#include "track.h"
-#endif
+
 #include <ctype.h>
 
 aServer *mainhub = NULL;
@@ -391,37 +383,17 @@ int m_nick(int parc, char **parv)
 			if(IsAdmin(user)) adm_active_add(who);
 		}
 
-#ifdef USE_WELCOMESERV /* Envoi du welcome si il est actif et non nul & non burst */
-		if(GetConf(CF_WELCOME) && !burst && !(serv->flag & ST_BURST)) choose_welcome(who->numeric);
-#endif
-
 	}
 	else if(parc <= 3) /* Changement de pseudo */
 	{
 		if(!(who = num2nickinfo(parv[0])))
 			return Debug(W_DESYNCH|W_WARN, "NICK %s > %s: aNick non trouvé!", parv[0], nick);
 
-#ifdef USE_NICKSERV
-		if(NHasKill(who)) kill_remove(who);
-#endif
 		switch_nick(who, nick);
 	}
 	else return Debug(W_PROTO|W_WARN, "#arg invalide: NICK %s %s %s: arg=%d",
 					parv[0], parv[1], parv[2], parc);
 
-#ifdef USE_NICKSERV	/* le mec est auth sur ce nick OU nick pris n'est pas reg */
-	if((who->user && !strcasecmp(who->user->nick, nick)) || !(user = getuserinfo(nick))) return 0;
-
-	csreply(who, GetReply(who, L_TOOKREGNICK), nick, cs.nick, RealCmd("login"), nick);
-
-	if(IsProtected(user))
-	{
-		int needkill = (!GetConf(CF_NOKILL) && UPKill(user));
-
-		csreply(who, GetReply(who, needkill ? L_NICKKILLED : L_NICKCHANGED), cf_kill_interval);
-		add_killinfo(who, needkill ? TIMER_KREGNICK : TIMER_CHNICK);
-	}
-#endif
 	return 0;
 }
 
@@ -582,9 +554,6 @@ int m_away(int parc, char **parv)
 	else
 	{
 		nick->flag &= ~N_AWAY;
-#ifdef USE_MEMOSERV
-		if(nick->user) show_notes(nick);
-#endif
 	}
 	return 0;
 }
@@ -829,10 +798,6 @@ static int exec_cmd(aHashCmd *cmd, aNick *nick, int parc, char **parv)
 
 	if(nick->user) fastfmt(buff, "\2$\2 $ par $@$", cmd->name, tmp, nick->nick, nick->user->nick);
 	else fastfmt(buff, "\2$\2 $ par $", cmd->name, tmp, nick->nick);
-
-#ifdef HAVE_TRACK
-	if(nick->user && UTracked(nick->user)) track_notify(nick->user, buff);
-#endif
 
 	putchan(buff);
 	log_write(ChanCmd(cmd) ? LOG_CCMD : LOG_UCMD, 0, "%s", buff);

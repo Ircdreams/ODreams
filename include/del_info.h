@@ -1,12 +1,9 @@
 /* include/del_info.h - Suppression d'informations en mémoire
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,11 +23,6 @@
 
 #ifndef HAVEINC_del_info
 #define HAVEINC_del_info
-
-#ifdef USE_NICKSERV
-extern int kill_remove(aNick *);
-extern void kill_free(aKill *);
-#endif
 
 extern void del_access(anUser *, aChan *);
 extern void del_join(aNick *, aNChan *);

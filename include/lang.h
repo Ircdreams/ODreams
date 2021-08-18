@@ -1,12 +1,9 @@
 /* src/lang.h - Gestion du multilangage
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -105,7 +102,7 @@ extern int LangCount;
 #define L_LOCKTOPIC 			63
 #define L_INFOLINEORNONE 		64
 #define L_DEFMODESARE 			65
-#define L_WELCOMEIS				66
+
 #define L_MOTDIS 				67
 #define L_DEFTOPICIS 			68
 #define L_DESCRIPTIONIS 		69
@@ -134,7 +131,7 @@ extern int LangCount;
 #define L_CICHANURL 			92
 #define L_CIBANLVL 				93
 #define L_CICHMODESLVL 			94
-#define L_CIWELCOME 			95
+
 #define L_CIACTUALTOPIC 		96
 #define L_CIACTUALMODES 		97
 #define L_CIOPTIONS 			98
@@ -180,23 +177,9 @@ extern int LangCount;
 #define L_ACUSER 				138
 #define L_ACLASTSEEN 			139
 #define L_ACONCHAN 				140
-#define L_MEMOTOTAL 			141
-#define L_MEMONEWTOTAL 			142
-#define L_MEMOEND 				143
-#define L_NOMEMOFOUND 			144
-#define L_MEMONEWNOTFOUND 		145
-#define L_MEMONOTFOUND 			146
-#define L_MEMOSDEL 				147
-#define L_MEMODEL 				148
-#define L_CANTSENDYOURSELF 		149
-#define L_XNOMEMO 				150
-#define L_MEMOLEN 				151
-#define L_MAXMEMO 				152
-#define L_MEMOSENT 				153
-#define L_MEMOFROM 				154
-#define L_WELCOMEJOIN 			155
+
 #define L_NEEDTOBEADMIN 		156
-#define L_HAVENEWMEMO 			157
+
 #define L_NOADMINAVAILABLE 		158
 #define L_ADMINAVAILABLE 		159
 #define L_MOREHELP 				160
@@ -221,7 +204,7 @@ extern int LangCount;
 #define L_PASS_CHANGE_DIFF 		179
 #define L_UREGTIME 				180
 #define L_NEEDMEMBERSHIP 		181
-#define L_MAXMEMOWARN 			182
+
 #define L_CHANNELPURGEWARN 		183
 #define L_UWASSUSPEND 			184
 #define L_CANTREGCHAN 			185

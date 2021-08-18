@@ -1,12 +1,9 @@
 /* src/flood.c - protection contre le flood
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -121,22 +118,4 @@ void ignore_clean(void)
 		free(i);
 	}
 	IgnoreList = NULL;
-}
-
-int show_ignores(aNick *nick, aChan *chan, int parc, char **parv)
-{
-	struct ignore *i = IgnoreList;
-	int c = 0;
-
-	if(!IgnoreList) return csntc(nick, GetReply(nick, L_NOINFOAVAILABLE));
-
-	csntc(nick, "Liste des Ignorés:");
-	for(; i; i = i->next)
-	{
-		struct irc_in_addr ip;
-		base64toip(i->host, &ip);
-		csntc(nick,"\002%d\2. \2%s\2 Expire dans %s",
-			++c, GetIP(&ip, NULL), duration(i->expire - CurrentTS));
-	}
-	return 1;
 }

@@ -1,10 +1,6 @@
 /* src/cs_register.c - Enregistrement de salon
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -64,97 +60,6 @@ int chan_check(const char *chan, aNick *nick)
 	return 1;
 }
 
-/*
- * register_chan <salon> <thème>
- */
-int register_chan(aNick *nick, aChan *c, int parc, char **parv)
-{
-	char *salon = parv[1], theme[DESCRIPTIONLEN + 1] = {0}, *ptr;
-	aJoin *j;
-
-	if(!chan_check(salon, nick)) return 0;
-
-	if(UCantRegChan(nick->user))
-	{
-		show_cantregchan(nick, nick->user);
-		return 0;
-	}
-
-	parv2msgn(parc, parv, 2, theme, DESCRIPTIONLEN);
-
-	if(strlen(theme) < 12)
-		return csntc(nick, GetReply(nick, L_MINDESCRIPTIONLEN));
-
-	if((ptr = IsAnOwner(nick->user)))
-		return csntc(nick, GetReply(nick, L_ALREADYOWNER), ptr);
-
-	if(getchaninfo(salon)) return csntc(nick, GetReply(nick, L_ALREADYREG), salon);
-
-	if(!(j = getjoininfo(nick, salon)) || !IsOp(j))
-		return csntc(nick, GetReply(nick, L_NEEDTOBEOP), salon);
-
-	c = add_chan(salon, theme);
-	add_access(nick->user, salon, OWNERLEVEL, A_MANAGERFLAGS, 1/* OnChan !*/);
-
-	csjoin(c, JOIN_REG|JOIN_FORCE);
-	cstopic(c, theme);
-	csntc(nick, GetReply(nick, L_CHANNOWREG), salon);
-	return 1;
-}
-
-/*
- * ren_chan <chan> <nouveau chan>
- */
-int ren_chan(aNick *nick, aChan *c, int parc, char **parv)
-{
-	aJoin *j;
-	const char *newchan = parv[2];
-
-	if(c->flag & C_ALREADYRENAME && !IsAdmin(nick->user))
-		return csntc(nick, GetReply(nick, L_CMDALREADYUSED), parv[0]);
-
-	if(!chan_check(newchan, nick)) return 0;
-
-	if(getchaninfo(newchan))
-		return csntc(nick, GetReply(nick, L_ALREADYREG), newchan);
-
-	if(!IsAdmin(nick->user) && (!(j = getjoininfo(nick, newchan)) || !IsOp(j)))
-		return csntc(nick, GetReply(nick, L_NEEDTOBEOP), newchan);
-
-	if(CJoined(c)) cspart(c, newchan);
-	/* csjoin will find the new NetChan */
-	if(c->netchan) c->netchan->regchan = NULL, c->netchan = NULL;
-	switch_chan(c, newchan);
-	csjoin(c, JOIN_FORCE);
-	c->flag |= C_ALREADYRENAME;
-
-	csntc(nick, GetReply(nick, L_OKCHANGED));
-	return 1;
-}
-
-/*
- * unreg_chan <salon> <raison>
- */
-int unreg_chan(aNick *nick, aChan *chan, int parc, char **parv)
-{
-	char tmp[300];
-
-	if(!chan->owner || chan->owner->user != nick->user)
-		return csntc(nick, GetReply(nick, L_NEEDTOBEOWNER));
-
-	if(parc < 2 || strcasecmp(parv[2], "CONFIRME"))
-		return csntc(nick, GetReply(nick, L_NEEDCONFIRM));
-
-	csntc(nick, GetReply(nick, L_CHANUNREG), parv[1]);
-	mysnprintf(tmp, sizeof tmp, "Unregister par %s@%s (%s)", nick->nick, nick->user->nick,
-		parc > 2 ? parv2msg(parc, parv, 3, 150) : "Aucune raison");
-
-	data_handle(nick->user->cantregchan, "Services", "Unregister récent",
-		cf_unreg_reg_delay,	DATA_T_CANTREGCHAN, nick->user);
-
-	del_chan(chan, 0, tmp);
-	return 1;
-}
 
 /*
  * register <user> <mail> <mail> [pass]
@@ -250,26 +155,5 @@ int register_user(aNick *nick, aChan *chan, int parc, char **parv)
 		csreply(nick, GetReply(nick, L_PASS_SENT), user->mail);
 		csreply(nick, GetReply(nick, L_REGISTERTIMEOUT), duration(cf_register_timeout));
 	}
-	return 1;
-}
-
-int drop_user(aNick *nick, aChan *chaninfo, int parc, char **parv)
-{
-	anUser *u = nick->user;
-	char tmp[80] = {0};
-
-	if(parc < 2 || strcasecmp(parv[2], "confirme"))
-		return csreply(nick, GetReply(nick, L_NEEDCONFIRM));
-
-	if(!checkpass(parv[1], u))
-		return csreply(nick, GetReply(nick, L_BADPASS), u->nick);
-
-	csreply(nick, GetReply(nick, L_OKDELETED), u->nick);
-
-	if(IsAnOwner(u))
-		mysnprintf(tmp, sizeof tmp, "Drop de l'username de l'owner (\2%s\2)", u->nick);
-
-	cs_account(nick, NULL);
-	del_regnick(u, 0, tmp);
 	return 1;
 }

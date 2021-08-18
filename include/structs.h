@@ -1,12 +1,9 @@
 /* include/structs.h - Déclaration des différentes structures
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -42,13 +39,6 @@ struct robot {
   unsigned long dataS; /* bytes envoyées depuis le début */
   unsigned long dataQ; /* bytes reçues */
 
-#ifdef WEB2CS
-	int w2c_port;
-	int CONtotal;
-	char w2c_pass[16 + 1];
-	unsigned int WEBtrafficUP;
-	unsigned int WEBtrafficDL;
-#endif
 };
 
 struct bots {
@@ -175,30 +165,27 @@ typedef struct userinfo {
 #define U_WANTX		 		0x00010
 #define U_OUBLI		 		0x00020
 #define U_FIRST 	 		0x00040
-#define U_NOMEMO	 		0x00080
 #define U_PREJECT	 		0x00100
 #define U_POKACCESS	 		0x00200
 #define U_PACCEPT	 		0x00400
 #define U_ALREADYCHANGE 	0x00800
 #define U_ADMBUSY 			0x01000
 #define U_MD5PASS 			0x02000
-#define U_HASVOTE 			0x04000
-#define U_NOVOTE 			0x08000
 #define U_PMREPLY 			0x10000
 #define U_CANTREGCHAN 		0x20000
-#define U_TRACKED 			0x40000
 
 /* All user flags */
 #define U_ALL (U_PKILL|U_PNICK|U_SUSPEND|U_NOPURGE|U_WANTX|U_OUBLI|U_FIRST| \
-				U_NOMEMO|U_PREJECT|U_POKACCESS|U_PACCEPT|U_ALREADYCHANGE|U_TRACKED| \
-				U_ADMBUSY|U_MD5PASS|U_HASVOTE|U_NOVOTE|U_PMREPLY|U_CANTREGCHAN)
+				U_PREJECT|U_POKACCESS|U_PACCEPT|U_ALREADYCHANGE| \
+				U_ADMBUSY|U_MD5PASS|U_PMREPLY|U_CANTREGCHAN)
 
 /* Flags that user cannot set/unset (admin or internal only) */
-#define U_BLOCKED (U_TRACKED|U_SUSPEND|U_NOPURGE|U_MD5PASS|U_ALREADYCHANGE|U_ADMBUSY|U_CANTREGCHAN)
+#define U_BLOCKED (U_SUSPEND|U_NOPURGE|U_MD5PASS|U_ALREADYCHANGE|U_ADMBUSY|U_CANTREGCHAN)
 
 /* Flags for runtime only (should not be written) */
-#define U_INTERNAL (U_TRACKED)
-
+/*
+#define U_INTERNAL ()
+*/
 /* Access policy flags */
 #define U_ACCESS_T 		(U_PREJECT|U_POKACCESS|U_PACCEPT)
 
@@ -213,9 +200,6 @@ typedef struct userinfo {
 	aData *suspend, *nopurge, *cantregchan;
 	struct access *accesshead;
 	aNick *n;
-#ifdef USE_MEMOSERV
-	struct memos *memohead, *memotail;
-#endif
 	struct userinfo *next, *mailnext, *idnext;
 } anUser;
 
@@ -233,18 +217,6 @@ typedef struct access {
    struct userinfo *user;
    struct access *next;
 } anAccess;
-
-#ifdef USE_MEMOSERV
-typedef struct memos {
-   char de[NICKLEN + 1];
-   char message[MEMOLEN + 1];
-   time_t date;
-   int flag;
-#define MEMO_READ 		0x1
-#define MEMO_AUTOEXPIRE 0x2
-   struct memos *next, *last;
-} aMemo;
-#endif
 
 /*------------------- Structures chans -------------------*/
 
@@ -274,12 +246,11 @@ typedef struct chaninfo {
 	char chan[REGCHANLEN + 1];
 	struct cmode defmodes; /* propriétés des salons regs */
 	char deftopic[TOPICLEN + 1];
-	char welcome[TOPICLEN + 1];
 	char description[DESCRIPTIONLEN + 1];
 	char url[URLLEN + 1];
 	char *motd;
 	int flag;
-#define C_SETWELCOME	0x0001
+
 #define C_JOINED		0x0002
 #define C_STRICTOP		0x0004
 #define C_LOCKTOPIC		0x0008
@@ -375,18 +346,6 @@ typedef struct HelpBuf {
 	int count;
 } HelpBuf;
 
-/*------------------- Structures kill -------------------*/
-
-#ifdef USE_NICKSERV
-enum KillType {TIMER_CHNICK, TIMER_KREGNICK};
-
-typedef struct killinfo {
-	aNick *nick;
-	enum KillType type;
-	struct killinfo *next;
-	struct killinfo *last;
-} aKill;
-#endif
 
 /*------------------- Structures parses et cmds -------------------*/
 

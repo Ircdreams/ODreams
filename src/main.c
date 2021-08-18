@@ -1,10 +1,6 @@
 /* src/main.c - Fichier principal
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -41,7 +37,6 @@
 #include "fichiers.h"
 #include "chanserv.h"
 #include "admin_user.h"
-#include "nickserv.h"
 #include "admin_cmds.h"
 #include "admin_chan.h"
 #include "admin_manage.h"
@@ -61,33 +56,13 @@
 #include "flood.h"
 #include "template.h"
 #include "version.h"
-#ifdef HAVE_TRACK
-#include "track.h"
-#endif
-#ifdef HAVE_VOTE
-#include "vote.h"
-#endif
-#ifdef USE_MEMOSERV
-#include "memoserv.h"
-#endif
-#ifdef USE_WELCOMESERV
-#include "welcome.h"
-#endif
 
 int running = 1;
 time_t CurrentTS = 0;
 
-#ifdef USE_NICKSERV
-aKill *killhead = NULL;
-#endif
 Lang *DefaultLang = NULL;
 
 struct robot bot = {{0}};
-#ifdef USE_WELCOMESERV
-struct bots ws = {{0}};
-char user_motd[400] = {0};
-char admin_motd[400] = {0};
-#endif
 struct bots cs = {{0}};
 
 aChan *chan_tab[CHANHASHSIZE] = {0}; 		/* hash chan */
@@ -189,7 +164,7 @@ int main(int argc, char **argv)
 				silent = 1;
 				break;
 			case 'v':
-				puts("Services SDreams " SPVERSION " (Rev:" REVDATE")\n"
+				puts("Services ODreams " SPVERSION " (Rev:" REVDATE")\n"
 					" (Build " __DATE__ " "__TIME__ ")\n"
 					"© 2021 @bugsounet");
 				return 0;
@@ -207,7 +182,7 @@ int main(int argc, char **argv)
 	{
 		if(fscanf(fd, "%d", &tmp) == 1)
 		{
-			fprintf(stderr, "SDreams est déjà lancé sur le pid %d.\nSi ce n'est pas "
+			fprintf(stderr, "ODreams est déjà lancé sur le pid %d.\nSi ce n'est pas "
 				"le cas, supprimez le fichier '"SDREAMS_PID"' et recommencez.\n", tmp);
 		}
 		fclose(fd);
@@ -232,116 +207,34 @@ int main(int argc, char **argv)
 	}
 	else bot.uptime = CurrentTS;
 
+	RegisterCmd("REGISTER", 	0, CMD_NEEDNOAUTH | CMD_SECURE, 3, register_user);
+	RegisterCmd("USER", 		2, CMD_ADMIN | CMD_SECURE3, 2, admin_user);
 	RegisterCmd("DIE", 			7, CMD_ADMIN, 0, die);
 	RegisterCmd("REHASH",		7, CMD_ADMIN, 0, rehash_conf);
 	RegisterCmd("RESTART", 		7, CMD_ADMIN, 0, restart_bot);
-	RegisterCmd("ADMINLVL", 	6, CMD_ADMIN, 2, admin_level);
 	RegisterCmd("CHCOMNAME", 	6, CMD_ADMIN, 2, chcomname);
+	RegisterCmd("ADMINLVL", 	6, CMD_ADMIN, 2, admin_level);
 	RegisterCmd("CHLEVEL", 		6, CMD_ADMIN, 2, chlevel);
 	RegisterCmd("DISABLE", 		6, CMD_ADMIN, 2, disable_cmd);
 	RegisterCmd("INVITEME",  	3, CMD_ADMIN, 0, inviteme);
 	RegisterCmd("WRITE", 		6, CMD_ADMIN, 0, write_files);
-	RegisterCmd("GLOBAL", 		5, CMD_ADMIN, 2, globals_cmds);
-	RegisterCmd("CHAN", 		2, CMD_ADMIN, 1, admin_chan);
-#ifdef HAVE_TRACK
-	RegisterCmd("TRACK", 		3, CMD_ADMIN, 1, cmd_track);
-#endif
-	RegisterCmd("USER", 		2, CMD_ADMIN | CMD_SECURE3, 2, admin_user);
 	RegisterCmd("WHOIS", 		3, CMD_NEEDNOAUTH|CMD_ADMIN, 1, cs_whois);
-#ifdef HAVE_VOTE
-	RegisterCmd("VOTE", 		5, CMD_ADMIN, 1, do_vote);
-#endif
 	RegisterCmd("SHOWCONFIG", 	7, CMD_NEEDNOAUTH|CMD_ADMIN, 0, showconfig);
-#ifdef USE_WELCOMESERV
-	RegisterCmd("GLOBWELCOME", 	5, CMD_ADMIN, 1, global_welcome);
-	RegisterCmd("ADMINMOTD", 	5, CMD_ADMIN, 1, set_motds);
-#endif
+	RegisterCmd("GLOBAL", 		5, CMD_ADMIN, 2, globals_cmds);
+	RegisterCmd("HELP", 		0, CMD_NEEDNOAUTH, 0, aide);
+	RegisterCmd("SHOWCOMMANDS", 0, CMD_NEEDNOAUTH, 0, showcommands);
+	RegisterCmd("ADMIN", 		0, CMD_NEEDNOAUTH, 0, show_admins);
+	RegisterCmd("UPTIME", 		0, CMD_NEEDNOAUTH, 0, uptime);
+	RegisterCmd("\1ping", 		0, CMD_NEEDNOAUTH, 0, ctcp_ping);
+	RegisterCmd("\1version\1", 	0, CMD_NEEDNOAUTH, 0, ctcp_version);
+
 	RegisterCmd("DNRCHAN", 		4, CMD_ADMIN, 1, dnrchan_manage);
 	RegisterCmd("DNRUSER", 		4, CMD_ADMIN, 1, dnruser_manage);
 	RegisterCmd("WHOISON", 		2, CMD_ADMIN|CMD_CHAN|CMD_MBRSHIP, 0, whoison);
 	RegisterCmd("SAY", 			4, CMD_ADMIN|CMD_CHAN|CMD_MBRSHIP, 2, admin_say);
 	RegisterCmd("DO", 			4, CMD_ADMIN|CMD_CHAN|CMD_MBRSHIP, 2, admin_do);
 
-	RegisterCmd("REGISTER", 	0, CMD_NEEDNOAUTH | CMD_SECURE, 3, register_user);
-	RegisterCmd("LOGIN", 		0, CMD_NEEDNOAUTH | CMD_SECURE, 2, ns_login);
-#ifdef USE_NICKSERV
-	RegisterCmd("RECOVER", 		0, CMD_NEEDNOAUTH | CMD_SECURE, 1, recover);
-#endif
-	RegisterCmd("MYACCESS", 	1, 0, 0, myaccess);
-	RegisterCmd("DROP", 		1, CMD_SECURE, 1, drop_user);
-	RegisterCmd("DEAUTH", 		1, CMD_DISABLE, 0, deauth);
-//	RegisterCmd("OUBLI", 		0, CMD_NEEDNOAUTH, 2, oubli_pass);
-	RegisterCmd("SENDPASS", 	0, CMD_NEEDNOAUTH, 2, oubli_pass);
-	RegisterCmd("SET", 			1, CMD_SECURE3, 1, user_set);
-#ifdef USE_MEMOSERV
-	RegisterCmd("MEMOS", 		1, CMD_SECURE3, 1, memos);
-#endif
-#ifdef HAVE_VOTE
-	RegisterCmd("VOTER", 		1, CMD_SECURE2, 0, voter);
-	RegisterCmd("RESULT", 		1, 0, 0, vote_results);
-#endif
-	RegisterCmd("HELP", 		0, CMD_NEEDNOAUTH, 0, aide);
-//	RegisterCmd("AIDE", 		0, CMD_NEEDNOAUTH, 0, aide);
-	RegisterCmd("SHOWCOMMANDS", 0, CMD_NEEDNOAUTH, 0, showcommands);
-	RegisterCmd("ADMIN", 		0, CMD_NEEDNOAUTH, 0, show_admins);
-	RegisterCmd("UPTIME", 		0, CMD_NEEDNOAUTH, 0, uptime);
-	RegisterCmd("SEEN", 		1, CMD_NEEDNOAUTH, 1, lastseen);
-
-	RegisterCmd("VERIFY", 		0, CMD_NEEDNOAUTH, 1, verify);
-	RegisterCmd("IGNORELIST", 	1, CMD_NEEDNOAUTH, 0, show_ignores);
-	RegisterCmd("\1ping", 		0, CMD_NEEDNOAUTH, 0, ctcp_ping);
-	RegisterCmd("\1version\1", 	0, CMD_NEEDNOAUTH, 0, ctcp_version);
-
-	RegisterCmd("REGCHAN", 		1, 0, 2, register_chan);
-	RegisterCmd("UNREG", 		OWNERLEVEL, CMD_CHAN, 1, unreg_chan);
-	RegisterCmd("RENCHAN", 		OWNERLEVEL, CMD_CHAN, 2, ren_chan);
-	RegisterCmd("ACCESS", 		0, CMD_NEEDNOAUTH|CMD_CHAN, 2, show_access);
-	RegisterCmd("BANLIST", 		0, CMD_NEEDNOAUTH|CMD_CHAN, 0, banlist);
-	RegisterCmd("CHANINFO", 	0, CMD_NEEDNOAUTH|CMD_CHAN, 1, chaninfo);
-	RegisterCmd("ALIST", 		100, CMD_NEEDNOAUTH|CMD_CHAN, 1, see_alist);
-	RegisterCmd("INFO", 		100, CMD_CHAN, 0, info);
-	RegisterCmd("INVITE", 		100, CMD_CHAN|CMD_MBRSHIP, 0, invite);
-	RegisterCmd("ADDUSER", 		450, CMD_CHAN, 3, add_user);
-	RegisterCmd("DELUSER", 		450, CMD_CHAN, 2, del_user);
-	RegisterCmd("BAN", 			100, CMD_CHAN|CMD_MBRSHIP, 2, ban_cmd);
-	RegisterCmd("UNBAN", 		300, CMD_CHAN|CMD_MBRSHIP, 2, unban);
-	RegisterCmd("KICKBAN", 		300, CMD_CHAN|CMD_MBRSHIP, 2, kickban);
-	RegisterCmd("CLEARBANS", 	300, CMD_CHAN, 0, clear_bans);
-	RegisterCmd("UNBANME", 		1, CMD_CHAN|CMD_MBRSHIP, 1, unbanme);
-	RegisterCmd("KICK", 		100, CMD_CHAN|CMD_MBRSHIP, 2, kick);
-	RegisterCmd("MODE", 		100, CMD_CHAN|CMD_MBRSHIP, 2, mode);
-	RegisterCmd("TOPIC", 		100, CMD_CHAN|CMD_MBRSHIP, 2, topic);
-	RegisterCmd("OPALL", 		400, CMD_CHAN|CMD_MBRSHIP, 1, opall);
-	RegisterCmd("DEOPALL", 		400, CMD_CHAN|CMD_MBRSHIP, 1, deopall);
-	RegisterCmd("CLEARMODES", 	400, CMD_CHAN|CMD_MBRSHIP, 0, clearmodes);
-	RegisterCmd("VOICEALL", 	300, CMD_CHAN|CMD_MBRSHIP, 1, voiceall);
-	RegisterCmd("DEVOICEALL", 	300, CMD_CHAN|CMD_MBRSHIP, 1, devoiceall);
-	RegisterCmd("OP", 			100, CMD_CHAN|CMD_MBRSHIP, 1, op);
-	RegisterCmd("DEOP", 		100, CMD_CHAN|CMD_MBRSHIP, 1, deop);
-	RegisterCmd("DEVOICE", 		50, CMD_CHAN|CMD_MBRSHIP, 1, devoice);
-	RegisterCmd("VOICE", 		50, CMD_CHAN|CMD_MBRSHIP, 1, voice);
-	RegisterCmd("RDEFMODES", 	300, CMD_CHAN|CMD_MBRSHIP, 1, rdefmodes);
-	RegisterCmd("RDEFTOPIC", 	300, CMD_CHAN|CMD_MBRSHIP, 1, rdeftopic);
-	RegisterCmd("MODUSER", 		400, CMD_CHAN, 3, generic_moduser);
-	RegisterCmd("AUTOOP", 		400, CMD_CHAN, 1, moduser_autoop);
-	RegisterCmd("AUTOVOICE", 	400, CMD_CHAN, 1, moduser_autovoice);
-	RegisterCmd("PROTECT", 		400, CMD_CHAN, 1, moduser_protect);
-	RegisterCmd("LOCKTOPIC", 	400, CMD_CHAN, 0, locktopic);
-	RegisterCmd("STRICTOP", 	450, CMD_CHAN, 1, strictop);
-	RegisterCmd("NOBANS", 		450, CMD_CHAN, 0, nobans);
-	RegisterCmd("NOOPS", 		450, CMD_CHAN, 0, noops);
-	RegisterCmd("DEFTOPIC", 	400, CMD_CHAN, 1, deftopic);
-	RegisterCmd("DEFMODES", 	400, CMD_CHAN, 1, defmodes);
-	RegisterCmd("DESCRIPTION",	450, CMD_CHAN, 1, description);
-	RegisterCmd("WELCOME", 		450, CMD_CHAN, 1, csetwelcome);
-	RegisterCmd("SETWELCOME", 	450, CMD_CHAN, 1, activwelcome);
-	RegisterCmd("BANLEVEL", 	400, CMD_CHAN, 1, banlevel);
-	RegisterCmd("BANTYPE", 		400, CMD_CHAN, 1, bantype);
-	RegisterCmd("CHANURL", 		450, CMD_CHAN, 1, chanurl);
-	RegisterCmd("MOTD", 		450, CMD_CHAN, 1, define_motd);
-	RegisterCmd("CHANOPT", 		450, CMD_CHAN, 2, generic_chanopt);
-
-	if(!silent) puts("Services SDreams " SPVERSION " v2 © 2021");
+	if(!silent) puts("Services ODreams " SPVERSION " v2 © 2021");
 
 	db_load_chans(silent); 	/* load channels first */
 	db_load_users(silent); 	/* so load_users() will manage to add accesses */
@@ -350,12 +243,6 @@ int main(int argc, char **argv)
 	{
 		load_cmds(silent);
 		load_dnr(silent);
-#ifdef USE_WELCOMESERV
-		load_welcome();
-#endif
-#ifdef HAVE_VOTE
-		load_votes();
-#endif
 	} /* first time */
 
 	BuildCommandsTable(0);
@@ -392,7 +279,6 @@ int main(int argc, char **argv)
 		"tapez : /%s %s <username> <email> <email> <pass>\n", cs.nick, RealCmd("register"));
 
 	if(!fd_in_use(0)) close(0); /* closing std(in|out|err) to free up some fds */
-	if(!fd_in_use(2)) close(2); /* therefore avoiding to waste mem in web2cs */
 	if(background && !fd_in_use(1)) close(1);
 
 	pid_write();

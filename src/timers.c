@@ -1,12 +1,9 @@
 /* src/timers.c - fonctions de controle appellées periodiquement
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +18,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- * $Id: timers.c,v 1.79 2008/02/09 19:45:49 romexzf Exp $
  */
 
 #include "main.h"
@@ -239,32 +235,6 @@ int callback_ban(Timer *timer)
 	ban_del(chan, ban);
 	return 1;
 }
-
-#ifdef USE_NICKSERV
-int callback_kill(Timer *timer)
-{
-	aKill *kill = timer->data1;
-
-	kill->nick->timer = NULL;
-	if(TIMER_CHNICK == kill->type)
-	{	/* generates a new nick based on current one and appends */
-		char buf[NICKLEN + 1];
-		do { /* a number of at max 4 digits */
-			snprintf(buf, sizeof buf, "%.20s%d", kill->nick->nick, rand() & 4095);
-		} while(getnickbynick(buf));
-
-		putserv("%s "TOKEN_SVSNICK" %s :%s", bot.servnum, kill->nick->numeric, buf);
-	}
-	else
-	{
-		putserv("%s "TOKEN_KILL" %s :%s (Pseudo enregistré/Registered Nick)",
-			cs.num,	kill->nick->numeric, cs.nick);
-		del_nickinfo(kill->nick->numeric, "timer kill");
-	}
-	kill_free(kill);
-	return 1;
-}
-#endif
 
 int callback_check_accounts(Timer *timer)
 {

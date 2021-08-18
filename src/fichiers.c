@@ -1,12 +1,9 @@
 /* src/fichiers.c - Lecture/Écriture des données
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,12 +32,6 @@
 #include "cs_cmds.h"
 #include "add_info.h"
 #include "data.h"
-#ifdef HAVE_VOTE
-#include "vote.h"
-#endif
-#ifdef USE_WELCOMESERV
-#include "welcome.h"
-#endif
 
 static void db_parse_data(aData **dpp, void *data, int flag, char **ar)
 { /* <DATA> <from> <fin> <debut> :<raison> */
@@ -107,12 +98,6 @@ int db_load_users(int quiet)
 		else if(!strcmp(buf, "CANTREGCHAN") && items > 4 && u)
 			db_parse_data(&u->cantregchan, u, DATA_T_CANTREGCHAN, ar);
 
-#ifdef USE_MEMOSERV
-		else if(!strcmp(buf, "MEMO") && items > 4 && u)
-		{ /* MEMO <from> <DateTS> <flag> :message */
-			add_memo(u, ar[1], strtol(ar[2], NULL, 10), ar[4], strtol(ar[3], NULL, 10));
-		}
-#endif
 		else if(!strcmp(buf, "ACCESS") && items > 5 && u)
 		{ /* ACCESS <#> <level> <flag> <lastseenTS> :info */
 			int level = strtol(ar[2], NULL, 10), flag = strtol(ar[3], NULL, 10);
@@ -146,9 +131,7 @@ int db_write_users(void)
 {
 	anAccess *a;
 	anUser *u;
-#ifdef USE_MEMOSERV
-	aMemo *memo;
-#endif
+
  	int i = 0;
  	FILE *fp;
 
@@ -165,7 +148,7 @@ int db_write_users(void)
 	for(; i < USERHASHSIZE; ++i) for(u = user_tab[i]; u; u = u->next)
 	{
 		fprintf(fp, "NICK %s %s %d %lu %d %ld %s %s %s %lu\n",
-			u->nick, u->passwd, u->level, u->lastseen, u->flag & ~U_INTERNAL, u->reg_time,
+			u->nick, u->passwd, u->level, u->lastseen, 0, u->reg_time,
 			u->mail, u->lastlogin ? u->lastlogin : "0", u->lang->langue, u->userid);
 		if(u->suspend) fprintf(fp, "SUSPEND %s %ld %ld :%s\n", u->suspend->from,
 			u->suspend->expire, u->suspend->debut, u->suspend->raison);
@@ -174,11 +157,6 @@ int db_write_users(void)
 		if(u->cantregchan) fprintf(fp, "CANTREGCHAN %s %ld %ld :%s\n", u->cantregchan->from,
 			u->cantregchan->expire, u->cantregchan->debut, u->cantregchan->raison);
 		if(u->cookie) fprintf(fp, "COOKIE %s\n", u->cookie);
-
-#ifdef USE_MEMOSERV
-		for(memo = u->memohead; memo; memo = memo->next)
-			fprintf(fp, "MEMO %s %ld %d :%s\n", memo->de, memo->date, memo->flag, memo->message);
-#endif
 
     	for(a = u->accesshead; a; a = a->next)
     		fprintf(fp, "ACCESS %s %d %d %lu :%s\n", a->c->chan, a->level,
@@ -214,7 +192,6 @@ int db_write_chans(void)
 
 		if(chan->defmodes.modes) fprintf(fp, "DEFMODES %s\n", GetCModes(chan->defmodes));
 		if(*chan->deftopic) fprintf(fp, "DEFTOPIC %s\n", chan->deftopic);
-		if(*chan->welcome) fprintf(fp, "WELCOME %s\n", chan->welcome);
 		if(chan->motd) fprintf(fp, "MOTD %s\n", chan->motd);
 		if(chan->suspend) fprintf(fp, "SUSPEND %s %ld %ld :%s\n", chan->suspend->from,
 			chan->suspend->expire, chan->suspend->debut, chan->suspend->raison);
@@ -275,7 +252,6 @@ int db_load_chans(int quiet)
 			string2scmode(&c->defmodes, field, !key && strchr(field, 'k') ? lim : key, lim);
 		}
 		else if(!strcmp(buff, "DEFTOPIC") && c) Strncpy(c->deftopic, field, TOPICLEN);
-		else if(!strcmp(buff, "WELCOME") && c) Strncpy(c->welcome, field, TOPICLEN);
 		else if(!strcmp(buff, "OPTIONS") && c)
 		{
 			int flag = 0, bantype = 0;
@@ -386,14 +362,8 @@ int write_files(aNick *nick, aChan *chan, int parc, char **parv)
 	switch(write)
 	{
 		case 0:
-#ifdef USE_WELCOMESERV
-			write_welcome();
-#endif
 			write_dnr();
 			write_cmds();
-#ifdef HAVE_VOTE
-			write_votes();
-#endif
 		case 0x1|0x2:
 			db_write_chans();
 			db_write_users();

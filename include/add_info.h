@@ -4,9 +4,10 @@
  *                         Romain Bignon  <Progs@coderz.info>
  *                         Benjamin Beret <kouak@kouak.org>
  *
- * site web: http://sf.net/projects/scoderz/
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,13 +27,6 @@
 
 #ifndef HAVEINC_add_info
 #define HAVEINC_add_info
-
-#ifdef USE_MEMOSERV
-extern void add_memo(anUser *, const char *, time_t, const char *, int);
-#endif
-#ifdef USE_NICKSERV
-extern void add_killinfo(aNick *, enum TimerType);
-#endif
 
 extern int add_server(const char *, const char *, const char *, const char *, const char *);
 extern anAccess *add_access(anUser *, const char *, int, int, time_t);

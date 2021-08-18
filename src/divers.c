@@ -1,10 +1,6 @@
 /* src/divers.c - Diverses commandes
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -62,17 +58,6 @@ int ctcp_version(aNick *nick, aChan *chan, int parc, char **parv)
 	return 1;
 }
 
-int lastseen(aNick *nick, aChan *chan, int parc, char **parv)
-{
-	anUser *u = getuserinfo(parv[1]);
-
-	if(!u) csntc(nick, GetReply(nick, L_NOSUCHUSER), parv[1]);
-	else if(u->n) csntc(nick, GetReply(nick, L_ELSEALREADYLOG));
-	else csntc(nick, GetReply(nick, L_FULLLASTSEEN), u->nick,
-				duration(CurrentTS - u->lastseen), get_time(nick, u->lastseen));
-	return 1;
-}
-
 int show_admins(aNick *nick, aChan *chan, int parc, char **parv)
 {
 	int i = 0;
@@ -103,20 +88,6 @@ int show_admins(aNick *nick, aChan *chan, int parc, char **parv)
 	csntc(nick, GetReply(nick, L_ADMINAVAILABLE));
 	csntc(nick, "  %s", nicks);
 #endif
-	return 1;
-}
-
-int verify(aNick *nick, aChan *chan, int parc, char **parv)
-{
-	aNick *n;
-
-	if(!strcasecmp(parv[1], cs.nick)) return csntc(nick, "Yeah, c'est bien moi :)");
-	if(!(n = getnickbynick(parv[1]))) return csntc(nick, GetReply(nick, L_NOSUCHNICK), parv[1]);
-	if(!n->user) return csntc(nick, GetReply(nick, L_NOTLOGUED), n->nick);
-
-	csntc(nick, "%s est logué sous l'username %s %s %s",
-		(IsAnAdmin(nick->user) || n == nick) ? GetNUHbyNick(n, 0) : n->nick, n->user->nick,
-		IsAdmin(n->user) ? "- Administrateur des Services" : "", IsOper(n) ? "- IRCop" : "");
 	return 1;
 }
 
@@ -152,10 +123,6 @@ void CleanUp(void)
 	for(i = 0; i < USERHASHSIZE; ++i) for(u = user_tab[i]; u; u = ut)
 	{
 		anAccess *a = u->accesshead, *at = NULL;
-#ifdef USE_MEMOSERV
-		aMemo *m = u->memohead, *mt = NULL;
-		for(; m; free(m), m = mt) mt = m->next;
-#endif
 		ut = u->next;
 		/* Access */
 		for(; a; free(a->info), free(a), a = at) at = a->next;

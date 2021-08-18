@@ -1,10 +1,6 @@
 /* src/admin_user.c - commandes admins pour gerer les users
  *
- * Copyright (C) 2002-2007 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
- *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -419,9 +415,8 @@ int admin_user(aNick *nick, aChan *chan, int parc, char **parv)
 			aBan *ban;
 			aNChan *nchan;
 			aLink *lp;
-			aMemo *m;
 			int nick_count = 0, user_count = 0, data_count = 0, chan_count = 0,
-				nchan_count = 0, member_count = 0, auth_count = 0, memo_count = 0,
+				nchan_count = 0, member_count = 0, auth_count = 0,
 				longest, i, used, list_size, ma, mb, maxbans, maxaccess, mem = 0;
 
 			if(!(maxbans = getoption("-maxbans", parv, parc, 2, GOPT_INT))) maxbans = WARNACCESS;
@@ -455,7 +450,6 @@ int admin_user(aNick *nick, aChan *chan, int parc, char **parv)
 			{
 				for(list_size = 0, u = user_tab[i]; u; u = u->next, ++list_size)
 				{
-					for(m = u->memohead; m; m = m->next) ++memo_count;
 					if(u->suspend) ++data_count;
 					if(u->nopurge) ++data_count;
 					if(u->cantregchan) ++data_count;
@@ -494,7 +488,7 @@ int admin_user(aNick *nick, aChan *chan, int parc, char **parv)
 
 			mem += nick_count * sizeof(aNick) + user_count * sizeof(anUser) + chan_count
 				* sizeof(aChan) + nchan_count * sizeof(aNChan) + member_count *
-				(sizeof(aLink) + sizeof(aJoin))	+ memo_count * sizeof(aMemo)
+				(sizeof(aLink) + sizeof(aJoin))
 				+ data_count * sizeof(aData) + (NCHANHASHSIZE + MAXNUM
 					+ USERHASHSIZE + CHANHASHSIZE + NICKHASHSIZE + CMDHASHSIZE) * sizeof(void *);
 
@@ -525,10 +519,6 @@ int admin_user(aNick *nick, aChan *chan, int parc, char **parv)
 				bot.dataS/1048576.0, bot.dataQ/1048576.0);
 			csreply(nick, "Traffic Actuel: %.3f Ko/s",
 				(bot.dataQ - bot.lastbytes) / ((CurrentTS - bot.lasttime) * 1024.0));
-#	ifdef WEB2CS
-			csreply(nick, "Web2CS: Traffic Up:\2 %.3f Ko\2 Down:\2 %.3f Ko\2 in %d connections",
-				bot.WEBtrafficUP/1024.0, bot.WEBtrafficDL/1024.0, bot.CONtotal);
-#	endif
 		}
 		if(!all && !memn && !traffic && !cmds)
 			csreply(nick, GetReply(nick, L_UNKNOWNOPTION), parc < 2 ? "<NULL>" : parv[2]);

@@ -4,7 +4,7 @@
  *                         Romain Bignon  <Progs@coderz.info>
  *                         Benjamin Beret <kouak@kouak.org>
  *
- * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
  * site web: http://www.ircdreams.org
  *
  * Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -29,15 +29,7 @@
 #define HAVEINC_mylog
 
 enum LogType {LOG_MAIN = 0, LOG_SOCKET, LOG_DB, LOG_RAW,
-			LOG_UCMD, LOG_CCMD,
-
-#ifdef HAVE_VOTE
-			LOG_VOTE,
-#endif
-#ifdef WEB2CS
-			LOG_W2C, LOG_W2CCMD, LOG_W2CRAW,
-#endif
-			LOG_TYPE_COUNT};
+			LOG_UCMD, LOG_CCMD,	LOG_TYPE_COUNT};
 
 #define LOG_DOWALLOPS 		0x01
 #define LOG_DONTLOG 		0x02

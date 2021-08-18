@@ -1,12 +1,9 @@
 /* src/convertdb.c - conversion des DBs
  *
- * Copyright (C) 2002-2008 David Cortier  <Cesar@ircube.org>
- *                         Romain Bignon  <Progs@coderz.info>
- *                         Benjamin Beret <kouak@kouak.org>
+ * ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+ * site web: http://www.ircdreams.org
  *
- * site web: http://sf.net/projects/scoderz/
- *
- * Services pour serveur IRC. Supporté sur IRCoderz
+ * Services pour serveur IRC. Supporté sur Ircdreams v3
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,30 +194,6 @@ aChan *add_chan(const char *chan, const char *description)
 	c->next = chan_tab[hash];		/* swap le vieux */
 	return (chan_tab[hash] = c);	/* et le nouveau (mis en tête) */
 }
-
-#ifdef USE_MEMOSERV
-static void add_memo(anUser *nick, const char *de, time_t date,
-					const char *message, int flag)
-{
-	aMemo *m = calloc(1, sizeof *m), *tmp = nick->memotail;
-
-	if(!m)
-	{
-		printf("error: add_memo, malloc a échoué pour aMemo %s (%s)\n", nick->nick, message);
-		return;
-	}
-
-	Strncpy(m->de, de, NICKLEN);
-	m->date = date;
-	m->flag = flag;
-	Strncpy(m->message, message, MEMOLEN);
-	m->next = NULL;
-
-	if(!(m->last = tmp)) nick->memohead = m;
-	if(tmp) tmp->next = m;
-	nick->memotail = m;
-}
-#endif
 
 static anAccess *add_access(anUser *user, const char *chan, int level,
 							int flag, time_t lastseen)
@@ -437,11 +410,6 @@ static int load_an_user(const char *buf, char **ar, int items, anUser **upp)
 	else if(!strcmp(buf, "SUSPEND") && items > 4 && u)
 			db_parse_data(&u->suspend, u, DATA_T_SUSPEND_USER, ar);
 
-#ifdef USE_MEMOSERV /* MEMO <from> <DateTS> <flag> :message */
-	else if(!strcmp(buf, "MEMO") && items > 4 && u)
-		add_memo(u, ar[1], strtol(ar[2], NULL, 10), ar[4], strtol(ar[3], NULL, 10));
-#endif
-
 	else if(!strcmp(buf, "ACCESS") && items > 5 && u)
 	{ /* ACCESS <#> <level> <flag> <lastseenTS> :info */
 		anAccess *a = add_access(u, ar[1], strtol(ar[2], NULL, 10),
@@ -551,7 +519,6 @@ static int load_a_chan(char *buff, char *field, aChan **cpp)
 		string2scmode(&c->defmodes, field, !key && strchr(field, 'k') ? lim : key, lim);
 	}
 	else if(!strcmp(buff, "DEFTOPIC") && c) Strncpy(c->deftopic, field, TOPICLEN);
-	else if(!strcmp(buff, "WELCOME") && c) Strncpy(c->welcome, field, TOPICLEN);
 	else if(!strcmp(buff, "OPTIONS") && c)
 	{
 		int flag = 0, bantype = 0;
@@ -705,9 +672,6 @@ int db_write_users(void)
 {
 	anAccess *a;
 	anUser *u;
-#ifdef USE_MEMOSERV
-	aMemo *m;
-#endif
  	int i = 0;
  	FILE *fp;
 
@@ -731,10 +695,6 @@ int db_write_users(void)
 		if(u->cantregchan) fprintf(fp, "CANTREGCHAN %s %ld %ld :%s\n", u->cantregchan->from,
 			u->cantregchan->expire, u->cantregchan->debut, u->cantregchan->raison);
 		if(u->cookie) fprintf(fp, "COOKIE %s\n", u->cookie);
-#ifdef USE_MEMOSERV
-		for(m = u->memohead; m; m = m->next)
-			fprintf(fp, "MEMO %s %ld %d :%s\n", m->de, m->date, m->flag, m->message);
-#endif
 
     	for(a = u->accesshead; a; a = a->next)
     		fprintf(fp, "ACCESS %s %d %d %lu :%s\n", a->c->chan, a->level,
@@ -768,7 +728,6 @@ int db_write_chans(void)
 
 		if(c->defmodes.modes) fprintf(fp, "DEFMODES %s\n", GetCModes(c->defmodes));
 		if(*c->deftopic) fprintf(fp, "DEFTOPIC %s\n", c->deftopic);
-		if(*c->welcome) fprintf(fp, "WELCOME %s\n", c->welcome);
 		if(c->motd) fprintf(fp, "MOTD %s\n", c->motd);
 		if(c->suspend) fprintf(fp, "SUSPEND %s %ld %ld :%s\n", c->suspend->from,
 			c->suspend->expire, c->suspend->debut, c->suspend->raison);
