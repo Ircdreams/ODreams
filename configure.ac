@@ -3,7 +3,7 @@
 #                         Romain Bignon  <Progs@ir3.org>
 #                         Benjamin Beret <kouak@kouak.org>
 #
-# * SDreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
+# ODreams v2 (C) 2021 -- Ext by @bugsounet <bugsounet@bugsounet.fr>
 # site web: http://www.ircdreams.org
 #
 # Services pour serveur IRC. Supporté sur Ircdreams v3
@@ -25,13 +25,13 @@
 # $Id: configure.ac,v 1.16 2006/01/15 18:43:45 progs Exp $
 
 AC_PREREQ(2.59)
-AC_INIT(SDreams, 2.0, http://www.bugsounet.fr)
+AC_INIT(ODreams, 2.0, http://www.bugsounet.fr)
 AM_INIT_AUTOMAKE
 
 AC_CONFIG_SRCDIR([bin/convert.c])
 AM_CONFIG_HEADER(config.h)
 
-AC_PREFIX_DEFAULT(~/Dreams/SDreams)
+AC_PREFIX_DEFAULT(~/Dreams/ODreams)
 
 # Checks for programs.
 AC_PROG_AWK
@@ -67,16 +67,16 @@ AC_CHECK_FUNCS([getpass gettimeofday inet_ntoa isascii memset select socket strc
 
 # Liens symboliques
 
-dnl --with-symlink lets us set the name of the symlink; defaults to "SDreams"
+dnl --with-symlink lets us set the name of the symlink; defaults to "ODreams"
 AC_MSG_CHECKING([what name to give the symlink])
 AC_ARG_WITH([symlink],
 [AC_HELP_STRING([--with-symlink=name],[Name to give the symlink; if name is "no", no symlink will be created])],
 [unet_cv_with_symlink=$with_symlink],
 [AC_CACHE_VAL(with_symlink,
-[with_symlink="SDreams"])])
+[with_symlink="ODreams"])])
 
 if test x"$with_symlink" = xyes; then
-    with_symlink="SDreams"
+    with_symlink="ODreams"
 fi
 
 AC_MSG_RESULT([$with_symlink])
@@ -132,7 +132,7 @@ fi
 
 #  MD5TRANSITION
 AC_ARG_ENABLE(	md5trans,
-		[AC_HELP_STRING([--enable-md5trans],[to activate if you use SDreams before 11/09/04 and that it is your first update])],
+		[AC_HELP_STRING([--enable-md5trans],[to activate if you use ODreams before 11/09/04 and that it is your first update])],
 		[
 			if test "x${enableval}" != "xno"; then
 				MD5TRANSITION=1
@@ -392,7 +392,7 @@ AC_DEFINE_UNQUOTED(LOG_ERREURS, "${LOG_ERREURS}", [Errors log file's name])
 
 #  FICHIER_CONF
 AC_ARG_WITH(	confname,
-		[AC_HELP_STRING([--with-confname],[configuration file's name [sdreams.conf]])],
+		[AC_HELP_STRING([--with-confname],[configuration file's name [odreams.conf]])],
 		[
 			if test "x$withval" = "xno" || test "x$withval" = "xyes"; then
 				AC_MSG_ERROR([You have to give a file name])
@@ -400,7 +400,7 @@ AC_ARG_WITH(	confname,
 				FICHIER_CONF=${withval}
 			fi
 		],
-		[FICHIER_CONF="sdreams.conf" ]
+		[FICHIER_CONF="odreams.conf" ]
 	)
 AC_DEFINE_UNQUOTED(FICHIER_CONF, "${FICHIER_CONF}", [Configuration file's name])
 
