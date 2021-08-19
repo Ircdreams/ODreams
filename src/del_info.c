@@ -102,26 +102,3 @@ void del_alljoin(aNick *nick)
 	}
 	nick->joinhead = NULL;
 }
-
-void ban_del(aChan *chan, aBan *ban)
-{
-	ban_remove(chan, ban);
-	ban_free(ban);
-}
-
-void ban_remove(aChan *chan, aBan *ban)
-{
-	if(ban->next) ban->next->last = ban->last;
-	if(ban->last) ban->last->next = ban->next; /* ban was the head */
-	else chan->banhead = ban->next;
-}
-
-void ban_free(aBan *ban)
-{
-	/* It was a temporary ban, I need to clean up timer's data */
-	/* Note that if it has been invoked by callback, timer == NULL */
-	if(ban->timer) timer_remove(ban->timer);
-	free(ban->raison);
-	free(ban->mask);
-	free(ban);
-}

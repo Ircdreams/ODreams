@@ -624,10 +624,6 @@ ac_includes_default="\
 #endif"
 
 ac_subst_vars='LTLIBOBJS
-MYSQLCLIENT_LIBS
-MYSQLCLIENT_CFLAGS
-MYSQLCLIENT_LDFLAGS
-MYSQL
 SYMLINK
 INSTALL_RULE
 LIBOBJS
@@ -701,18 +697,8 @@ with_symlink
 enable_ircu
 enable_oplevels
 enable_md5trans
-enable_nickserv
-enable_memoserv
-enable_welcomeserv
-enable_votes
 enable_ipv6
-enable_sqllog
-with_mysqlclient_prefix
-with_mysqlclient_include
-with_mysqlclient_lib
-enable_web2cs
 enable_crypthosts
-enable_track
 with_dbdir
 enable_debug
 enable_warnings
@@ -722,8 +708,6 @@ with_chanslog
 with_cmdslog
 with_errorslog
 with_confname
-with_maxmemos
-with_memolen
 enable_adminreg
 enable_secure
 enable_oldadminlist
@@ -1366,15 +1350,8 @@ Optional Features:
   --enable-oplevels       if you want oplevels
   --enable-md5trans       to activate if you use ODreams before 11/09/04 and
                           that it is your first update
-  --disable-nickserv      disable nickserv module
-  --disable-memoserv      disable memoserv module
-  --disable-welcomeserv   disable welcomeserv module
-  --disable-votes         disable votes module
   --enable-ipv6           enable ipv6 support
-  --enable-sqllog         enable sql logs
-  --enable-web2cs         enable web2cs module (see website/WEB2CS)
   --disable-crypthosts    disable if you don't use Ircdreams v3
-  --disable-track         disable tracks
   --enable-debug          enable debug
   --enable-warnings       enable warnings during compilation
   --enable-adminreg       admins can use REGISTER to record usernames
@@ -1387,14 +1364,6 @@ Optional Packages:
   --without-PACKAGE       do not use PACKAGE (same as --with-PACKAGE=no)
   --with-symlink=name     Name to give the symlink; if name is "no", no
                           symlink will be created
-  --with-mysqlclient-prefix=PFX
-                          Prefix where mysqlclient is installed
-  --with-mysqlclient-include=DIR
-                          Directory pointing to mysqlclient include files
-  --with-mysqlclient-lib=LIB
-                          Directory pointing to mysqlclient library (Note:
-                          -include and -lib do override paths found with
-                          -prefix)
   --with-dbdir            name of database directory in path [database]
   --with-parseslog        parseslog file's name [logs/parses.log]
   --with-fauthlog         failed auth log file's name [logs/failed_auth.log]
@@ -1402,9 +1371,6 @@ Optional Packages:
   --with-cmdslog          commands log file's name [logs/cmds.log]
   --with-errorslog        errors log file's name [logs/erreurs.log]
   --with-confname         configuration file's name [odreams.conf]
-  --with-maxmemos         maximum memo numbers which one can send to the same
-                          person [5]
-  --with-memolen          maximum length of memos [250]
 
 Some influential environment variables:
   CC          C compiler command
@@ -4758,90 +4724,6 @@ _ACEOF
 
 fi
 
-#  USE_NICKSERV
-# Check whether --enable-nickserv was given.
-if test "${enable_nickserv+set}" = set; then :
-  enableval=$enable_nickserv;
-			if test "x${enableval}" = "xno"; then
-				USE_NICKSERV=0
-			fi
-
-else
-  USE_NICKSERV=1
-
-fi
-
-if test "x${USE_NICKSERV}" = "x1"; then
-
-cat >>confdefs.h <<_ACEOF
-#define USE_NICKSERV 1
-_ACEOF
-
-fi
-
-#  USE_MEMOSERV
-# Check whether --enable-memoserv was given.
-if test "${enable_memoserv+set}" = set; then :
-  enableval=$enable_memoserv;
-			if test "x${enableval}" = "xno"; then
-				USE_MEMOSERV=0
-			fi
-
-else
-  USE_MEMOSERV=1
-
-fi
-
-if test "x${USE_MEMOSERV}" = "x1"; then
-
-cat >>confdefs.h <<_ACEOF
-#define USE_MEMOSERV 1
-_ACEOF
-
-fi
-
-#  USE_WELCOMESERV
-# Check whether --enable-welcomeserv was given.
-if test "${enable_welcomeserv+set}" = set; then :
-  enableval=$enable_welcomeserv;
-			if test "x${enableval}" = "xno"; then
-				USE_WELCOMESERV=0
-			fi
-
-else
-  USE_WELCOMESERV=1
-
-fi
-
-if test "x${USE_WELCOMESERV}" = "x1"; then
-
-cat >>confdefs.h <<_ACEOF
-#define USE_WELCOMESERV 1
-_ACEOF
-
-fi
-
-#  HAVE_VOTE
-# Check whether --enable-votes was given.
-if test "${enable_votes+set}" = set; then :
-  enableval=$enable_votes;
-			if test "x${enableval}" = "xno"; then
-				HAVE_VOTE=0
-			fi
-
-else
-  HAVE_VOTE=1
-
-fi
-
-if test "x${HAVE_VOTE}" = "x1"; then
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_VOTE 1
-_ACEOF
-
-fi
-
 #  HAVE_IPV6
 # Check whether --enable-ipv6 was given.
 if test "${enable_ipv6+set}" = set; then :
@@ -4864,211 +4746,6 @@ _ACEOF
 fi
 
 
-#  SQLLOG
-x="0";
-# Check whether --enable-sqllog was given.
-if test "${enable_sqllog+set}" = set; then :
-  enableval=$enable_sqllog;
-
-
-# Check whether --with-mysqlclient-prefix was given.
-if test "${with_mysqlclient_prefix+set}" = set; then :
-  withval=$with_mysqlclient_prefix; mysqlclient_prefix="$withval"
-else
-  mysqlclient_prefix=""
-fi
-
-
-
-# Check whether --with-mysqlclient-include was given.
-if test "${with_mysqlclient_include+set}" = set; then :
-  withval=$with_mysqlclient_include; mysqlclient_include="$withval"
-else
-  mysqlclient_include=""
-fi
-
-
-
-# Check whether --with-mysqlclient-lib was given.
-if test "${with_mysqlclient_lib+set}" = set; then :
-  withval=$with_mysqlclient_lib; mysqlclient_lib="$withval"
-else
-  mysqlclient_lib=""
-fi
-
-
-    { $as_echo "$as_me:${as_lineno-$LINENO}: checking for mysqlclient " >&5
-$as_echo_n "checking for mysqlclient ... " >&6; }
-    MYSQLCLIENT_LDFLAGS=""
-    MYSQLCLIENT_CFLAGS=""
-    MYSQLCLIENT_LIBS="-lmysqlclient"
-    mysqlclient_fail=""
-
-    	for tryprefix in /usr /usr/local /usr/mysql /usr/local/mysql /usr/pkg $msqlclient_prefix; do
-		#testloop
-		for hloc in lib/mysql lib ; do
-			if test -e "$tryprefix/$hloc/libmysqlclient.so"; then
-                MYSQLCLIENT_LDFLAGS="-L$tryprefix/$hloc"
-			fi
-		done
-
-		for iloc in include/mysql include; do
-			if test -e "$tryprefix/$iloc/mysql.h"; then
-                MYSQLCLIENT_CFLAGS="-I$tryprefix/$iloc"
-            fi
-        done
-		# testloop
-	done
-
-        if test "x$mysqlclient_include" != "x" ; then
-		echo "checking for mysql includes... "
-        if test -d "$mysqlclient_include/mysql" ; then
-            MYSQLCLIENT_CFLAGS="-I$mysqlclient_include"
-			echo " found $MYSQLCLIENT_CFLAGS"
-        elif test -d "$mysqlclient_include/include/mysql" ; then
-            MYSQLCLIENT_CFLAGS="-I$mysqlclient_include/include"
-			echo " found $MYSQLCLIENT_CFLAGS"
-        elif test -d "$mysqlclient_include" ; then
-            MYSQLCLIENT_CFLAGS="-I$mysqlclient_include"
-			echo "found $MYSQLCLIENT_CFLAGS"
-		else
-			echo "not found!  no include dir found in $mysqlclient_include"
-        fi
-    fi
-
-        if test "x$mysqlclient_lib" != "x" ; then
-		echo "checking for mysql libx... "
-        if test -d "$mysqlclient_lib/lib/mysql" ; then
-            MYSQLCLIENT_LDFLAGS="-L$mysqlclient_lib/lib/mysql"
-			echo "found $MYSQLCLIENT_LDFLAGS"
-        elif test -d "$mysqlclient_lib/lin" ; then
-            MYSQLCLIENT_LDFLAGS="-L$mysqlclient_lib/lib"
-			echo "found $MYSQLCLIENT_LDFLAGS"
-        else
-            MYSQLCLIENT_LDFLAGS="-L$mysqlclient_lib"
-			echo "defaultd to $MYSQLCLIENT_LDFLAGS"
-        fi
-    fi
-
-    ac_save_CFLAGS="$CFLAGS"
-    ac_save_LDFLAGS="$LDFLAGS"
-    ac_save_LIBS="$LIBS"
-    CFLAGS="-v $CFLAGS $MYSQLCLIENT_CFLAGS"
-    LDFLAGS="$LDFLAGS $MYSQLCLIENT_LDFLAGS"
-    LIBS="$LIBS $MYSQLCLIENT_LIBS"
-                cat confdefs.h - <<_ACEOF >conftest.$ac_ext
-/* end confdefs.h.  */
-
-            #include <mysql.h>
-            #include <mysql_version.h>
-
-int
-main ()
-{
-
-            mysql_connect( 0, 0, 0, 0);
-
-  ;
-  return 0;
-}
-_ACEOF
-if ac_fn_c_try_compile "$LINENO"; then :
-  { $as_echo "$as_me:${as_lineno-$LINENO}: result: yes $MYSQLCLIENT_CFLAGS $MYSQLCLIENT_LDFLAGS" >&5
-$as_echo "yes $MYSQLCLIENT_CFLAGS $MYSQLCLIENT_LDFLAGS" >&6; }
-           CFLAGS="$ac_save_CFLAGS"
-           LDFLAGS="$ac_save_LDFLAGS"
-           LIBS="$ac_save_LIBS"
-
-
-cat >>confdefs.h <<_ACEOF
-#define SLQLLOG 1
-_ACEOF
-
-				ac_fn_c_check_header_mongrel "$LINENO" "mysql/mysql.h" "ac_cv_header_mysql_mysql_h" "$ac_includes_default"
-if test "x$ac_cv_header_mysql_mysql_h" = xyes; then :
-
-$as_echo "#define MYSQL_HEADER_PREFIX 1" >>confdefs.h
-
-fi
-
-
-
-				x="1";
-
-
-else
-
-			echo "no"
-			echo "can't compile a simple app with mysql_connnect in it. bad."
-          mysqlclient_fail="yes"
-
-fi
-rm -f core conftest.err conftest.$ac_objext conftest.$ac_ext
-
-    if test "x$mysqlclient_fail" != "x" ; then
-                        echo
-            echo "***"
-            echo "*** mysqlclient test source had problems, check your config.log ."
-            echo "*** Also try one of the following switches :"
-            echo "***   --with-mysqlclient-prefix=PFX"
-            echo "***   --with-mysqlclient-include=DIR"
-            echo "***   --with-mysqlclient-lib=DIR"
-            echo "***"
-            CFLAGS="$ac_save_CFLAGS"
-            LDFLAGS="$ac_save_LDFLAGS"
-            LIBS="$ac_save_LIBS"
-            as_fn_error $? "If you don't have mysql you have to disable sql logs !" "$LINENO" 5
-    fi
-
-    CFLAGS="$ac_save_CFLAGS"
-    LDFLAGS="$ac_save_LDFLAGS"
-    LIBS="$ac_save_LIBS"
-
-
-
-
-
-			if test "$x" = "1"; then
-				LIBS="$LIBS$MYSQLCLIENT_LIBS "
-				CFLAGS="$CFLAGS $MYSQLCLIENT_CFLAGS "
-				LDFLAGS="$LDFLAGS $MYSQLCLIENT_LDFLAGS "
-				SQLLOG=1
-			fi
-
-else
-  SQLLOG=0
-
-fi
-
-if test "x${SQLLOG}" = "x1"; then
-
-cat >>confdefs.h <<_ACEOF
-#define SQLLOG 1
-_ACEOF
-
-fi
-
-#  WEB2CS
-# Check whether --enable-web2cs was given.
-if test "${enable_web2cs+set}" = set; then :
-  enableval=$enable_web2cs;
-			if test "x${enableval}" != "xno"; then
-				WEB2CS=1
-			fi
-
-else
-  WEB2CS=0
-
-fi
-
-if test "x${WEB2CS}" = "x1"; then
-
-cat >>confdefs.h <<_ACEOF
-#define WEB2CS 1
-_ACEOF
-
-fi
-
 #  HAVE_CRYPTHOST
 # Check whether --enable-crypthosts was given.
 if test "${enable_crypthosts+set}" = set; then :
@@ -5086,27 +4763,6 @@ if test "x${HAVE_CRYPTHOST}" = "x1"; then
 
 cat >>confdefs.h <<_ACEOF
 #define HAVE_CRYPTHOST 1
-_ACEOF
-
-fi
-
-#  HAVE_TRACK
-# Check whether --enable-track was given.
-if test "${enable_track+set}" = set; then :
-  enableval=$enable_track;
-			if test "x${enableval}" = "xno"; then
-				HAVE_TRACK=0
-			fi
-
-else
-  HAVE_TRACK=1
-
-fi
-
-if test "x${HAVE_TRACK}" = "x1"; then
-
-cat >>confdefs.h <<_ACEOF
-#define HAVE_TRACK 1
 _ACEOF
 
 fi
@@ -5294,50 +4950,6 @@ fi
 
 cat >>confdefs.h <<_ACEOF
 #define FICHIER_CONF "${FICHIER_CONF}"
-_ACEOF
-
-
-#  MAXMEMOS
-
-# Check whether --with-maxmemos was given.
-if test "${with_maxmemos+set}" = set; then :
-  withval=$with_maxmemos;
-			if test "x$withval" = "xno" || test "x$withval" = "xyes"; then
-				as_fn_error $? "You have to give a a number" "$LINENO" 5
-			else
-				MAXMEMOS=${withval}
-			fi
-
-else
-  MAXMEMOS=5
-
-fi
-
-
-cat >>confdefs.h <<_ACEOF
-#define MAXMEMOS ${MAXMEMOS}
-_ACEOF
-
-
-#  MEMOLEN
-
-# Check whether --with-memolen was given.
-if test "${with_memolen+set}" = set; then :
-  withval=$with_memolen;
-			if test "x$withval" = "xno" || test "x$withval" = "xyes"; then
-				as_fn_error $? "You have to give a number" "$LINENO" 5
-			else
-				MEMOLEN=${withval}
-			fi
-
-else
-  MEMOLEN=250
-
-fi
-
-
-cat >>confdefs.h <<_ACEOF
-#define MEMOLEN ${MEMOLEN}
 _ACEOF
 
 

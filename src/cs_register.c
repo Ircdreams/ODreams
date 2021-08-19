@@ -133,7 +133,7 @@ int register_user(aNick *nick, aChan *chan, int parc, char **parv)
 			csjoin(chan, JOIN_FORCE);
 			db_write_chans();
 			db_write_users();
-			csreply(nick, "Bienvenue sur les Services CoderZ " SPVERSION " !");
+			csreply(nick, "Bienvenue sur les Services ODreams " SPVERSION " !");
 			csreply(nick, "Vous êtes Administrateurs des Services de niveau maximum.");
 			csreply(nick, "Le salon %s vient d'être enregistré sous votre Username", bot.chan);
 			ConfFlag &= ~CF_PREMIERE;
@@ -156,4 +156,42 @@ int register_user(aNick *nick, aChan *chan, int parc, char **parv)
 		csreply(nick, GetReply(nick, L_REGISTERTIMEOUT), duration(cf_register_timeout));
 	}
 	return 1;
+}
+
+int first_register(aNick *nick, aChan *chaninfo, int parc, char **parv)
+{
+  anUser *user = NULL;
+  aNick *n;
+  aHashCmd *cmdp = FindCommand("REGISTER");
+
+  if (!(n = getnickbynick(parv[1])))
+    return osntc(nick, "No such nick: %s", parv[1]);
+
+  if(!(n->flag & N_OPER))
+    return osntc(nick, "Permission Denied: You are not an IRC Operator !");
+
+  if(!GetConf(CF_PREMIERE))
+    return osntc(nick, "Reserved for the first launch!");
+
+  if((user = getuserinfo(parv[1])))
+    return osntc(nick, "%s is already registered", user->nick);
+
+  user = add_regnick(parv[1], 10);
+
+  osntc(nick, "Welcome to ODreams IRC Service [" SPVERSION "] !");
+  osntc(nick, "You are a maximum level administrator.");
+
+  ConfFlag &= ~CF_PREMIERE;
+  cmdp->flag |= CMD_DISABLE;
+
+  //load_cmds();
+  //BuildCommandsTable(1);
+  //write_cmds();
+  db_write_users();
+
+  user = getuserinfo(parv[1]);
+  nick->user = user;
+  nick->user->n = nick;
+
+  return 1;
 }

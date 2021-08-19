@@ -67,19 +67,19 @@ MAKEINFO = @MAKEINFO@
 PACKAGE = @PACKAGE@
 VERSION = @VERSION@
 
-sdreams_PROGRAMS = SDreams
-bin_PROGRAMS = $(sdreams_PROGRAMS)
+odreams_PROGRAMS = ODreams
+bin_PROGRAMS = $(odreams_PROGRAMS)
 convertdb_PROGRAMS = convertdb
 
 INCLUDES = -I../include
 INCLUDES_DIR = ../include
 DEFS = -I$(srcdir)
-sdreams_SOURCES = main.c mystring.c outils.c cs_cmds.c serveur.c fichiers.c add_info.c del_info.c mylog.c \
-		 config.c lang.c mkpasswd.c showcommands.c checksum.c nickserv.c \
+odreams_SOURCES = main.c mystring.c outils.c cs_cmds.c serveur.c fichiers.c add_info.c del_info.c mylog.c \
+		 config.c lang.c mkpasswd.c showcommands.c checksum.c \
 		 hash.c hash_chan.c socket.c hash_cmd.c hash_user.c hash_nick.c data.c dnr.c \
 		 divers.c aide.c admin_cmds.c admin_manage.c admin_user.c admin_chan.c \
-		 cs_register.c chanserv.c match.c opdeop.c moduser.c chanopt.c \
-		 chaninfo.c userinfo.c debug.c ban.c template.c timers.c flood.c
+		 cs_register.c chanserv.c match.c opdeop.c \
+		 userinfo.c debug.c template.c timers.c flood.c
 convertdb_SOURCES = convertdb.c mystring.c
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
@@ -93,9 +93,9 @@ CPPFLAGS = @CPPFLAGS@
 LDFLAGS = @LDFLAGS@
 LIBS = @LIBS@
 CFLAGS = @CFLAGS@
-sdreams_OBJECTS = ${sdreams_SOURCES:%.c=%.o}
-sdreams_LDADD = $(LDADD)
-sdreams_LDFLAGS =
+odreams_OBJECTS = ${odreams_SOURCES:%.c=%.o}
+odreams_LDADD = $(LDADD)
+odreams_LDFLAGS =
 convertdb_OBJECTS = ${convertdb_SOURCES:%.c=%.o}
 convertdb_LDADD = $(LDADD)
 convertdb_LDFLAGS =
@@ -109,8 +109,8 @@ DISTFILES = $(DIST_COMMON) $(SOURCES) $(HEADERS) $(TEXINFOS) $(EXTRA_DIST)
 
 TAR = tar
 GZIP_ENV = --best
-SOURCES = $(sdreams_SOURCES)
-OBJECTS = $(sdreams_OBJECTS)
+SOURCES = $(odreams_SOURCES)
+OBJECTS = $(odreams_OBJECTS)
 
 .SUFFIXES:
 .SUFFIXES: .S .c .o .s
@@ -126,13 +126,13 @@ install-with-symlink: $(PROGRAMS)
 	@$(NORMAL_INSTALL)
 	$(mkinstalldirs) $(DESTDIR)$(bindir) $(dbdir) $(prefix)/logs
 
-	@echo `date +%Y%m%d%H%M` > /tmp/sdreams.tag;
-	@echo "Installing new SDreams service as ${prefix}/sdreams.`cat /tmp/sdreams.tag` :"
-	${INSTALL_PROGRAM} $(sdreams_PROGRAMS) ${prefix}/sdreams.`cat /tmp/sdreams.tag`
+	@echo `date +%Y%m%d%H%M` > /tmp/odreams.tag;
+	@echo "Installing new ODreams service as ${prefix}/odreams.`cat /tmp/odreams.tag` :"
+	${INSTALL_PROGRAM} $(odreams_PROGRAMS) ${prefix}/odreams.`cat /tmp/odreams.tag`
 	@( cd ${prefix}; \
 	  ${RM} -f ${SYMLINK}; \
-	  ${LN_S} sdreams.`cat /tmp/sdreams.tag` ${SYMLINK}; )
-	@${RM} /tmp/sdreams.tag
+	  ${LN_S} odreams.`cat /tmp/odreams.tag` ${SYMLINK}; )
+	@${RM} /tmp/odreams.tag
 
 	-cp -r ../aide $(DESTDIR)$(prefix)
 	-cp -r ../lang $(DESTDIR)$(prefix)
@@ -168,9 +168,9 @@ convertdb: $(convertdb_OBJECTS)
 	$(LINK) $(convertdb_LDFLAGS) $(convertdb_OBJECTS) $(convertdb_LDADD) $(LIBS)
 	ln -s ../src/convertdb ../bin/convertdb
 
-SDreams: $(sdreams_OBJECTS)
-	@rm -f SDreams
-	$(LINK) $(sdreams_LDFLAGS) $(sdreams_OBJECTS) $(sdreams_LDADD) $(LIBS)
+ODreams: $(odreams_OBJECTS)
+	@rm -f ODreams
+	$(LINK) $(odreams_LDFLAGS) $(odreams_OBJECTS) $(odreams_LDADD) $(LIBS)
 
 tags: TAGS
 
@@ -279,12 +279,12 @@ maintainer-clean:  distclean
 tags distdir check all install uninstall install-strip installdirs \
 mostlyclean clean distclean maintainer-clean
 
-# ${sdreams_OBJECTS}: ../config.h
+# ${odreams_OBJECTS}: ../config.h
 
 add_info.o: add_info.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/debug.h ../include/outils.h ../config.h ../include/hash.h \
-  ../include/ban.h ../include/add_info.h ../include/cs_cmds.h \
+  ../include/add_info.h ../include/cs_cmds.h \
   ../include/token.h ../include/serveur.h ../include/timers.h
 admin_chan.o: admin_chan.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
@@ -313,24 +313,10 @@ aide.o: aide.c ../include/main.h ../include/mystring.h \
   ../include/cs_cmds.h ../include/token.h ../include/outils.h \
   ../include/debug.h ../include/mylog.h ../include/hash.h \
   ../include/showcommands.h
-ban.o: ban.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/ban.h ../include/outils.h ../include/hash.h \
-  ../include/add_info.h ../include/del_info.h ../include/cs_cmds.h \
-  ../include/token.h ../config.h
-chaninfo.o: chaninfo.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/outils.h ../include/ban.h ../include/admin_chan.h \
-  ../include/cs_cmds.h ../include/token.h ../include/hash.h \
-  ../include/data.h
-chanopt.o: chanopt.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/outils.h ../include/cs_cmds.h ../include/token.h \
-  ../include/ban.h ../include/hash.h
 chanserv.o: chanserv.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/hash.h ../include/cs_cmds.h ../include/token.h \
-  ../include/outils.h ../include/chanserv.h ../config.h ../include/ban.h \
+  ../include/outils.h ../include/chanserv.h ../config.h \
   ../include/add_info.h ../include/del_info.h ../include/fichiers.h
 checksum.o: checksum.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
@@ -419,22 +405,18 @@ main.o: main.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../config.h ../include/mylog.h ../include/hash.h ../include/outils.h \
   ../include/serveur.h ../include/fichiers.h ../include/chanserv.h \
-  ../include/admin_user.h ../include/nickserv.h ../include/admin_cmds.h \
+  ../include/admin_user.h ../include/admin_cmds.h \
   ../include/admin_chan.h ../include/admin_manage.h ../include/divers.h \
-  ../include/moduser.h ../include/chanopt.h ../include/opdeop.h \
-  ../include/chaninfo.h ../include/showcommands.h ../include/aide.h \
+  ../include/opdeop.h \
+  ../include/showcommands.h ../include/aide.h \
   ../include/cs_register.h ../include/cs_cmds.h ../include/token.h \
-  ../include/timers.h ../include/socket.h ../include/ban.h \
+  ../include/timers.h ../include/socket.h \
   ../include/dnr.h ../include/flood.h ../include/template.h \
   ../include/version.h
 match.o: match.c
 mkpasswd.o: mkpasswd.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/crypt.h ../include/checksum.h ../include/debug.h
-moduser.o: moduser.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/outils.h ../include/cs_cmds.h ../include/token.h \
-  ../include/hash.h
 mylog.o: mylog.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../config.h ../include/outils.h ../include/debug.h ../include/mylog.h \
@@ -442,14 +424,6 @@ mylog.o: mylog.c ../include/main.h ../include/mystring.h \
 mystring.o: mystring.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/debug.h
-nickserv.o: nickserv.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/hash.h ../include/userinfo.h ../include/admin_manage.h \
-  ../include/chanserv.h ../include/outils.h ../include/mylog.h \
-  ../include/cs_cmds.h ../include/token.h ../include/add_info.h \
-  ../include/del_info.h ../config.h ../include/fichiers.h \
-  ../include/aide.h ../include/data.h ../include/dnr.h \
-  ../include/nickserv.h ../include/crypt.h ../include/template.h
 opdeop.o: opdeop.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/opdeop.h ../include/cs_cmds.h ../include/token.h \

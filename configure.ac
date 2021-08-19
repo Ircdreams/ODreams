@@ -140,62 +140,6 @@ if test "x${MD5TRANSITION}" = "x1"; then
 	AC_DEFINE_UNQUOTED(MD5TRANSITION, 1, [Defined if there are crypt() pass in database])
 fi
 
-#  USE_NICKSERV
-AC_ARG_ENABLE(	nickserv,
-		[AC_HELP_STRING([--disable-nickserv],[disable nickserv module])],
-		[
-			if test "x${enableval}" = "xno"; then
-				USE_NICKSERV=0
-			fi
-		],
-		[USE_NICKSERV=1 ]
-	)
-if test "x${USE_NICKSERV}" = "x1"; then
-	AC_DEFINE_UNQUOTED(USE_NICKSERV, 1, [Defined if nickserv module is enabled])
-fi
-
-#  USE_MEMOSERV
-AC_ARG_ENABLE(	memoserv,
-		[AC_HELP_STRING([--disable-memoserv],[disable memoserv module])],
-		[
-			if test "x${enableval}" = "xno"; then
-				USE_MEMOSERV=0
-			fi
-		],
-		[USE_MEMOSERV=1 ]
-	)
-if test "x${USE_MEMOSERV}" = "x1"; then
-	AC_DEFINE_UNQUOTED(USE_MEMOSERV, 1, [Defined if memoserv module is enabled])
-fi
-
-#  USE_WELCOMESERV
-AC_ARG_ENABLE(	welcomeserv,
-		[AC_HELP_STRING([--disable-welcomeserv],[disable welcomeserv module])],
-		[
-			if test "x${enableval}" = "xno"; then
-				USE_WELCOMESERV=0
-			fi
-		],
-		[USE_WELCOMESERV=1 ]
-	)
-if test "x${USE_WELCOMESERV}" = "x1"; then
-	AC_DEFINE_UNQUOTED(USE_WELCOMESERV, 1, [Defined if welcomeserv module is enabled])
-fi
-
-#  HAVE_VOTE
-AC_ARG_ENABLE(	votes,
-		[AC_HELP_STRING([--disable-votes],[disable votes module])],
-		[
-			if test "x${enableval}" = "xno"; then
-				HAVE_VOTE=0
-			fi
-		],
-		[HAVE_VOTE=1 ]
-	)
-if test "x${HAVE_VOTE}" = "x1"; then
-	AC_DEFINE_UNQUOTED(HAVE_VOTE, 1, [Defined if votes module is enabled])
-fi
-
 #  HAVE_IPV6
 AC_ARG_ENABLE(  ipv6,
                 [AC_HELP_STRING([--enable-ipv6],[enable ipv6 support])],
@@ -211,45 +155,6 @@ if test "x${HAVE_IPV6}" = "x1"; then
 fi
 
 
-#  SQLLOG
-x="0";
-AC_ARG_ENABLE(	sqllog,
-		[AC_HELP_STRING([--enable-sqllog],[enable sql logs])],
-		[
-			AM_PATH_MYSQLCLIENT(,[
-				AC_DEFINE_UNQUOTED(SLQLLOG,1,"Use sql logs")
-				AC_CHECK_HEADER(mysql/mysql.h,AC_DEFINE(MYSQL_HEADER_PREFIX,1,"Has mysql/mysql.h"))
-				AC_SUBST(MYSQL)
-				x="1";
-			],AC_MSG_ERROR([If you don't have mysql you have to disable sql logs !]))
-
-			if test "$x" = "1"; then
-				LIBS="$LIBS$MYSQLCLIENT_LIBS "
-				CFLAGS="$CFLAGS $MYSQLCLIENT_CFLAGS "
-				LDFLAGS="$LDFLAGS $MYSQLCLIENT_LDFLAGS "
-				SQLLOG=1
-			fi
-		],
-		[SQLLOG=0 ]
-	)
-if test "x${SQLLOG}" = "x1"; then
-	AC_DEFINE_UNQUOTED(SQLLOG, 1, [Defined if sql logs are enabled])
-fi
-
-#  WEB2CS
-AC_ARG_ENABLE(	web2cs,
-		[AC_HELP_STRING([--enable-web2cs],[enable web2cs module (see website/WEB2CS)])],
-		[
-			if test "x${enableval}" != "xno"; then
-				WEB2CS=1
-			fi
-		],
-		[WEB2CS=0 ]
-	)
-if test "x${WEB2CS}" = "x1"; then
-	AC_DEFINE_UNQUOTED(WEB2CS, 1, [Defined if web2cs module is enabled])
-fi
-
 #  HAVE_CRYPTHOST
 AC_ARG_ENABLE(	crypthosts,
 		[AC_HELP_STRING([--disable-crypthosts],[disable if you don't use Ircdreams v3])],
@@ -262,20 +167,6 @@ AC_ARG_ENABLE(	crypthosts,
 	)
 if test "x${HAVE_CRYPTHOST}" = "x1"; then
 	AC_DEFINE_UNQUOTED(HAVE_CRYPTHOST, 1, [Defined if hostname are crypted])
-fi
-
-#  HAVE_TRACK
-AC_ARG_ENABLE(	track,
-		[AC_HELP_STRING([--disable-track],[disable tracks])],
-		[
-			if test "x${enableval}" = "xno"; then
-				HAVE_TRACK=0
-			fi
-		],
-		[HAVE_TRACK=1 ]
-	)
-if test "x${HAVE_TRACK}" = "x1"; then
-	AC_DEFINE_UNQUOTED(HAVE_TRACK, 1, [Defined if tracks are enabled])
 fi
 
 #  DBDIR
@@ -399,34 +290,6 @@ AC_ARG_WITH(	confname,
 		[FICHIER_CONF="odreams.conf" ]
 	)
 AC_DEFINE_UNQUOTED(FICHIER_CONF, "${FICHIER_CONF}", [Configuration file's name])
-
-#  MAXMEMOS
-AC_ARG_WITH(	maxmemos,
-		[AC_HELP_STRING([--with-maxmemos],[maximum memo numbers which one can send to the same person [5]])],
-		[
-			if test "x$withval" = "xno" || test "x$withval" = "xyes"; then
-				AC_MSG_ERROR([You have to give a a number])
-			else
-				MAXMEMOS=${withval}
-			fi
-		],
-		[MAXMEMOS=5 ]
-	)
-AC_DEFINE_UNQUOTED(MAXMEMOS, ${MAXMEMOS}, [Maximum memo numbers which one can send to the same person])
-
-#  MEMOLEN
-AC_ARG_WITH(	memolen,
-		[AC_HELP_STRING([--with-memolen],[maximum length of memos [250]])],
-		[
-			if test "x$withval" = "xno" || test "x$withval" = "xyes"; then
-				AC_MSG_ERROR([You have to give a number])
-			else
-				MEMOLEN=${withval}
-			fi
-		],
-		[MEMOLEN=250 ]
-	)
-AC_DEFINE_UNQUOTED(MEMOLEN, ${MEMOLEN}, [Maximum length of memos])
 
 #  ADMINREG
 AC_ARG_ENABLE(	adminreg,

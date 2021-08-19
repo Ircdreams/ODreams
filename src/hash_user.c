@@ -154,8 +154,7 @@ anUser *GetUserIbyID(unsigned long userid)
 	return tmp;
 }
 
-anUser *add_regnick(const char *user, const char *pass, time_t lastseen, time_t regtime,
-					 int level, int flag, const char *mail, unsigned long userid)
+anUser *add_regnick(const char *user, int level)
 {
 	anUser *u = calloc(1, sizeof *u);
 
@@ -166,23 +165,29 @@ anUser *add_regnick(const char *user, const char *pass, time_t lastseen, time_t 
 	}
 
 	Strncpy(u->nick, user, NICKLEN);
-	strcpy(u->passwd, pass);
-	u->lastseen = lastseen;
-	u->reg_time = regtime;
 	u->level = level;
-	Strncpy(u->mail, mail, MAILLEN);
-	u->flag = flag;
-	u->suspend = NULL;
-	u->cantregchan = NULL;
-	u->nopurge = NULL;
-	u->lastlogin = NULL;
-	u->cookie = NULL;
-	u->userid = userid ? userid : ++user_maxid;
 
 	hash_adduser(u);
-	hash_addmail(u);
-	hash_addid(u);
 	return u;
+}
+
+anUser *add_regnick(const char *user, int level)
+{
+  anUser *new;
+  unsigned int hash = do_hashu(user);
+
+  if(!(new = calloc(1, sizeof *new)))
+  {
+    Debug(W_MAX|W_WARN, "add_regnick, malloc a échoué pour anUser %s", user);
+    return NULL;
+  }
+
+  Strncpy(new->nick, user, NICKLEN);
+  new->level = level;
+
+  new->next = user_tab[hash];
+  user_tab[hash] = new;
+  return new;
 }
 
 void del_regnick(anUser *user, int flag, const char *raison)

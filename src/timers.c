@@ -232,7 +232,6 @@ int callback_ban(Timer *timer)
 	ban->timer = NULL; /* prevent ban_del from clearing it too */
 
 	csmode(chan, MODE_OBV, "-b $", ban->mask);
-	ban_del(chan, ban);
 	return 1;
 }
 

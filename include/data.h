@@ -31,22 +31,4 @@ extern int data_handle(aData *, const char *, const char *, time_t, int, void *)
 extern int data_load(aData **, const char *, const char *, int, time_t, time_t, void *);
 extern void data_free(aData *);
 
-#define show_generic(nick, of, type_str, type, f) do { 					\
-	if(of->type)														\
-	{ 																	\
-		char buf[TIMELEN + 1]; 											\
-		Strncpy(buf, get_time(nick, of->type->debut), sizeof buf -1); 	\
-		csreply(nick, "%c"type_str" par %s %s, expirant %s (%s)", 		\
-		 (of->flag & f) ? '\2' : ' ', of->type->from, buf, 				\
-		 of->type->expire ? get_time(nick, of->type->expire) : "Jamais",\
-		 *of->type->raison ? of->type->raison : "-No Reason-"); 		\
-	 } 																	\
- } while(0)
-
-#define show_csuspend(nick, chan) show_generic(nick, chan, "Suspendu", suspend, C_SUSPEND)
-#define show_ususpend(nick, user) show_generic(nick, user, "Suspendu", suspend, U_SUSPEND)
-#define show_nopurge(nick, user) show_generic(nick, user, "Nopurge", nopurge, U_NOPURGE)
-#define show_cantregchan(nick, user) show_generic(nick, user, "CantRegChan", \
-										cantregchan, U_CANTREGCHAN)
-
 #endif /*HAVEINC_data*/

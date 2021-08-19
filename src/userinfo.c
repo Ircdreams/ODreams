@@ -104,9 +104,5 @@ int show_userinfo(aNick *nick, anUser *user, int flag)
 
 	csreply(nick, GetReply(nick, L_OPTIONS), GetUserOptions(user));
 
-	if(user->suspend) show_ususpend(nick, user);
-	if(user->cantregchan) show_cantregchan(nick, user);
-	if(user->nopurge) show_nopurge(nick, user);
-
 	return 0;
 }

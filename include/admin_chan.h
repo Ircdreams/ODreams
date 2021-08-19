@@ -27,7 +27,6 @@
 #ifndef HAVEINC_adminchan
 #define HAVEINC_adminchan
 
-extern int admin_chan(aNick *, aChan *, int, char **);
 extern int whoison(aNick *, aChan *, int, char **);
 
 #endif /*HAVEINC_adminchan*/

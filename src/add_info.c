@@ -26,7 +26,6 @@
 #include "outils.h"
 #include "config.h"
 #include "hash.h"
-#include "ban.h"
 #include "add_info.h"
 #include "cs_cmds.h"
 #include "serveur.h"
@@ -154,16 +153,6 @@ void add_join(aNick *nick, const char *chan, int status, time_t timestamp, aNCha
 		csjoin(c, JOIN_FORCE);
 	}
 
-	/* check bans if not a burst join */
-	if(!(status & J_BURST) && !IsOperOrService(nick) && !IsAnAdmin(nick->user)
-		&& (ban = is_ban(nick, c, NULL)))
-	{
-		csmode(c, MODE_OBV, "+b $", ban->mask);
-		cskick(chan, nick->numeric, "Enforce: $", ban->raison);
-		return; /* just got banned, nothing more to do ! */
-	}
-	/* Ok, he is not banned, perform join */
-
 	/* he has an access, mark him as on channel (bursting or not) */
 	if(nick->user && (a = GetAccessIbyUserI(nick->user, c)) && !ASuspend(a)) a->lastseen = 1;
 	else a = NULL;
@@ -209,8 +198,6 @@ aBan *ban_create(const char *mask, const char *raison, const char *de,
 	if(*ban->nick == '*' && !ban->nick[1]) ban->flag |= BAN_ANICKS;
 	if(*ban->user == '*' && !ban->user[1]) ban->flag |= BAN_AUSERS;
 	if(*ban->host == '*' && !ban->host[1]) ban->flag |= BAN_AHOSTS;
-
-	if(ipmask_parse(ban->host, &ban->ipmask, &ban->cbits)) ban->flag |= BAN_IP;
 
 	str_dup(&ban->raison, raison);
 	Strncpy(ban->de, de, NICKLEN);

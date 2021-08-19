@@ -27,7 +27,6 @@
 #include "outils.h"
 #include "chanserv.h"
 #include "config.h"
-#include "ban.h"
 #include "add_info.h"
 #include "del_info.h"
 

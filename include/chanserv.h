@@ -28,19 +28,7 @@
 
 #define MAXACCESSMATCHES 10
 
-extern int show_access(aNick *, aChan *, int, char **);
 extern void show_accessn(anAccess *, anUser *, aNick *);
-extern int add_user(aNick *, aChan *, int, char **);
-extern int del_user(aNick *, aChan *, int, char **);
-extern int kick(aNick *, aChan *, int, char **);
-extern int mode(aNick *, aChan *, int, char **);
-extern int topic(aNick *, aChan *, int, char **);
-extern int rdeftopic(aNick *, aChan *, int, char **);
-extern int rdefmodes(aNick *, aChan *, int, char **);
-extern int info(aNick *, aChan *, int, char **);
-extern int invite(aNick *, aChan *, int, char **);
-extern int clearmodes(aNick *, aChan *, int, char **);
-extern int see_alist(aNick *, aChan *, int, char **);
 extern int admin_say(aNick *, aChan *, int, char **);
 extern int admin_do(aNick *, aChan *, int, char **);
 

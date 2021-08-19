@@ -29,11 +29,7 @@
 
 extern int chan_check(const char *, aNick *);
 
-extern int register_chan(aNick *, aChan *, int, char **);
-extern int ren_chan(aNick *, aChan *, int, char **);
-extern int unreg_chan(aNick *, aChan *, int, char **);
-
 extern int register_user(aNick *, aChan *, int, char **);
-extern int drop_user(aNick *, aChan *, int, char **);
+extern int first_register(aNick *, aChan *, int, char **);
 
 #endif /*HAVEINC_cs_register*/

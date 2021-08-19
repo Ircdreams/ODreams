@@ -41,17 +41,13 @@
 #include "admin_chan.h"
 #include "admin_manage.h"
 #include "divers.h"
-#include "moduser.h"
-#include "chanopt.h"
 #include "opdeop.h"
-#include "chaninfo.h"
 #include "showcommands.h"
 #include "aide.h"
 #include "cs_register.h"
 #include "cs_cmds.h"
 #include "timers.h"
 #include "socket.h"
-#include "ban.h"
 #include "dnr.h"
 #include "flood.h"
 #include "template.h"
@@ -72,44 +68,6 @@ aNick **num_tab[MAXNUM] = {0}; 				/* table num -> struct nick */
 aServer *serv_tab[MAXNUM] = {0}; 			/* table numserv -> serv info */
 aNick *nick_tab[NICKHASHSIZE] = {0}; 		/* hash nick */
 
-/*            FONCTIONS COMMANDES
- *            =-=-=-=-=-=-=-=-=-=
- *
- *    Il y a deux types de fonctions commandes.
- *    Les normales :
- *       parv[0] = pseudo du robot appelé
- *       parv[1->parc] = arguments de la commandes
- *    Et les commandes salons (voir strict cs_commands) :
- *       parv[0] = nom de la commande appelée
- *       parv[1] = salon appelé
- *       parv[2->parv] = arguments de la commande (après le nom du salon)
- *    Toutes les commandes doivent respecter ce schéma.
- *    Lorsqu'une commande salon est tapée sur un salon, et que le premier
- *    argument n'est pas un nom de salon, le nom du salon actuel est placé
- *    automatiquement comme premier argument.
- *
- *    Chaque commande emploie une entête particulière :
- *    int commande(aNick *, aChan *, int, char **)
- *      aNick *nick = structure nickinfo de l'user qui a appelé la fonction
- *      aChan *chaninfo = structure chaninfo du salon si la cmd est chan=1 (sinon chaninfo=NULL)
- *      int parc = nombre d'arguments *SANS COMPTER PARV[0]*. (si le dernier arg
- *                 est parv[5], alors parc = 5.)
- *      char **parv = tableau contenant les arguments (une ligne = un mot).
- *
- *    Outils utiles :
- *      parv2msgn(int parc, char **parv, int position, char *buf, int size)
- *          permet de convertir une fin de tableau en un message normal.
- *          il faut spécifier le tableau et le nombre d'arguments contenu
- *          ainsi que la position à laquelle on va commencer à enregistrer
- *          le contenu dans la variable envoyée en paramètre (taille max size).
- *		parv2msg(int parc, char **parv, int position, int size)
- *			idem mais renvoit un pointeur vers la string formée plutot que l'écrire dans buf
- *      num2nickinfo(const char *num)
- *          renvoie la struct de la num spécifiée (accès direct désormais avec la table des nums)
- *      csntc(aNick *nick, register const char *format, ...)
- *          envoyer une notice avec le CS
- *    Pour plus d'outils, voir outils.c.
- */
 
 static void sig_die(int c)
 {
@@ -207,11 +165,12 @@ int main(int argc, char **argv)
 	}
 	else bot.uptime = CurrentTS;
 
-	RegisterCmd("REGISTER", 	0, CMD_NEEDNOAUTH | CMD_SECURE, 3, register_user);
-	RegisterCmd("USER", 		2, CMD_ADMIN | CMD_SECURE3, 2, admin_user);
+	RegisterCmd("REGISTER", 	0, CMD_NEEDNOAUTH | CMD_SECURE, 3, first_register);
+	//RegisterCmd("USER", 		2, CMD_ADMIN | CMD_SECURE3, 2, admin_user);
 	RegisterCmd("DIE", 			7, CMD_ADMIN, 0, die);
 	RegisterCmd("REHASH",		7, CMD_ADMIN, 0, rehash_conf);
 	RegisterCmd("RESTART", 		7, CMD_ADMIN, 0, restart_bot);
+	/*
 	RegisterCmd("CHCOMNAME", 	6, CMD_ADMIN, 2, chcomname);
 	RegisterCmd("ADMINLVL", 	6, CMD_ADMIN, 2, admin_level);
 	RegisterCmd("CHLEVEL", 		6, CMD_ADMIN, 2, chlevel);
@@ -233,7 +192,7 @@ int main(int argc, char **argv)
 	RegisterCmd("WHOISON", 		2, CMD_ADMIN|CMD_CHAN|CMD_MBRSHIP, 0, whoison);
 	RegisterCmd("SAY", 			4, CMD_ADMIN|CMD_CHAN|CMD_MBRSHIP, 2, admin_say);
 	RegisterCmd("DO", 			4, CMD_ADMIN|CMD_CHAN|CMD_MBRSHIP, 2, admin_do);
-
+    */
 	if(!silent) puts("Services ODreams " SPVERSION " v2 © 2021");
 
 	db_load_chans(silent); 	/* load channels first */

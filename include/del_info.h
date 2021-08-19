@@ -29,8 +29,4 @@ extern void del_join(aNick *, aNChan *);
 extern void del_link(aNChan *, aLink *);
 extern void del_alljoin(aNick *);
 
-extern void ban_del(aChan *, aBan *);
-extern void ban_remove(aChan *, aBan *);
-extern void ban_free(aBan *);
-
 #endif /*HAVEINC_del_info*/
