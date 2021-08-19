@@ -211,7 +211,6 @@ int showconfig(aNick *nick, aChan *c, int parc, char **parv)
 	csreply(nick, "Admin exempté de flood : %s Kill pour flood : %s",
 		GetConf(CF_ADMINEXEMPT) ? "Oui" : "Non", GetConf(CF_KILLFORFLOOD) ? "Oui" : "Non");
 	csreply(nick, "Temps d'ignore : %s", duration(cf_ignoretime));
-	csreply(nick, "Programme de mail : %s", cf_mailprog ? cf_mailprog : "aucun");
 	csreply(nick, "Host hidding: %s (Suffixe: %s)",
 		GetConf(CF_HOSTHIDING) ? "Oui" : "Non", cf_hidden_host);
 	return 1;

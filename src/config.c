@@ -110,29 +110,6 @@ static int cf_validserv(struct conf_item *i, char *buf)
 	return 0;
 }
 
-static int cf_validmail(struct conf_item *i, char *buf)
-{
-	char *p = (char *) i->ptr;
-
-	ConfFlag |= CF_NOMAIL; /* default: no mail */
-	if(strcasecmp(p, "nomail"))
-	{
-		char *sp = strchr(p, ' ');
-
-		if(sp) *sp = 0;
-
-		if(access(p, X_OK) < 0)
-			printf("conf: Invalid sendmail program at '%s' (%s)\n", p, strerror(errno));
-		else
-		{
-			if(sp) *sp = ' ';
-			str_dup(&cf_mailprog, p);
-			ConfFlag &= ~CF_NOMAIL; /* sendmail program looks ok */
-		}
-	}
-	return 1;
-}
-
 static int cf_validport(struct conf_item *i, char *buf)
 {
 	int port = *(int *) i->ptr;
@@ -215,7 +192,6 @@ struct conf_item conf_items[] = {
 	/* misc */
 	{CONF_MISC, CONF_TPRIV, NULL, 0, "commandchar",
 		"caractère prefixant les commandes salons", cf_validcchar},
-	{CONF_MISC, CONF_TPRIV, NULL, 0, "mailprog", "path vers Sendmail", cf_validmail},
 	{CONF_MISC, CONF_TARRAY, CONF_MARRAY(cf_hidden_host), "hidden_host",
 		"Suffixe de l'host des users logués aux services", NULL},
 	{CONF_MISC, CONF_TPTR, &cf_pasdeperm, 0, "pas_de_perm",

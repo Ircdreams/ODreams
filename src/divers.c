@@ -97,27 +97,11 @@ void CleanUp(void)
 	int i = 0;
 
 	free(cf_quit_msg);
-	free(cf_mailprog);
 	free(cf_pasdeperm);
 
 	socket_close();
 	purge_network(); /* nicks(+joins) + netchans + servers */
 
-	for(i = 0; i < CHANHASHSIZE; ++i) for(c = chan_tab[i]; c; c = ct)
-	{
-		aLink *lp = c->access, *lp_t = NULL;
-		aBan *b = c->banhead, *bt = NULL;
-
-		ct = c->next;
-		/* Access links */
-		for(; lp; free(lp), lp = lp_t) lp_t = lp->next;
-		/* Bans */
-		for(; b; free(b->raison), free(b->mask), free(b), b = bt) bt = b->next;
-
-		if(c->suspend) data_free(c->suspend);
-		free(c->motd);
-		free(c);
-	}
 	for(i = 0; i < USERHASHSIZE; ++i) for(u = user_tab[i]; u; u = ut)
 	{
 		anAccess *a = u->accesshead, *at = NULL;

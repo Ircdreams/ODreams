@@ -52,7 +52,6 @@ extern int cf_register_timeout;
 extern int cf_unreg_reg_delay;
 extern char *cf_quit_msg;
 extern char *cf_pasdeperm;
-extern char *cf_mailprog;
 extern char cf_hidden_host[];
 extern char cf_defraison[];
 
