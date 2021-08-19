@@ -48,9 +48,7 @@
 #include "cs_cmds.h"
 #include "timers.h"
 #include "socket.h"
-#include "dnr.h"
 #include "flood.h"
-#include "template.h"
 #include "version.h"
 
 int running = 1;
@@ -170,6 +168,7 @@ int main(int argc, char **argv)
 	RegisterCmd("DIE", 			7, CMD_ADMIN, 0, die);
 	RegisterCmd("REHASH",		7, CMD_ADMIN, 0, rehash_conf);
 	RegisterCmd("RESTART", 		7, CMD_ADMIN, 0, restart_bot);
+	RegisterCmd("SHOWCOMMANDS", 0, CMD_NEEDNOAUTH, 0, showcommands);
 	/*
 	RegisterCmd("CHCOMNAME", 	6, CMD_ADMIN, 2, chcomname);
 	RegisterCmd("ADMINLVL", 	6, CMD_ADMIN, 2, admin_level);
@@ -181,7 +180,6 @@ int main(int argc, char **argv)
 	RegisterCmd("SHOWCONFIG", 	7, CMD_NEEDNOAUTH|CMD_ADMIN, 0, showconfig);
 	RegisterCmd("GLOBAL", 		5, CMD_ADMIN, 2, globals_cmds);
 	RegisterCmd("HELP", 		0, CMD_NEEDNOAUTH, 0, aide);
-	RegisterCmd("SHOWCOMMANDS", 0, CMD_NEEDNOAUTH, 0, showcommands);
 	RegisterCmd("ADMIN", 		0, CMD_NEEDNOAUTH, 0, show_admins);
 	RegisterCmd("UPTIME", 		0, CMD_NEEDNOAUTH, 0, uptime);
 	RegisterCmd("\1ping", 		0, CMD_NEEDNOAUTH, 0, ctcp_ping);
@@ -195,17 +193,14 @@ int main(int argc, char **argv)
     */
 	if(!silent) puts("Services ODreams " SPVERSION " v2 © 2021");
 
-	db_load_chans(silent); 	/* load channels first */
 	db_load_users(silent); 	/* so load_users() will manage to add accesses */
 
 	if(!GetConf(CF_PREMIERE))
 	{
 		load_cmds(silent);
-		load_dnr(silent);
 	} /* first time */
 
 	BuildCommandsTable(0);
-	tmpl_load(); 		/* load templates for mails */
 	help_load(NULL); 	/* load all languages */
 
 	signal(SIGPIPE, SIG_IGN);
@@ -243,7 +238,6 @@ int main(int argc, char **argv)
 	pid_write();
 
 	timer_add(PURGEDELAY, TIMER_PERIODIC, callback_check_accounts, NULL, NULL);
-	timer_add(PURGEDELAY, TIMER_PERIODIC, callback_check_chans, NULL, NULL);
 	timer_add(cf_write_delay, TIMER_PERIODIC, callback_write_dbs, NULL, NULL);
 
 	socket_init();
@@ -253,7 +247,6 @@ int main(int argc, char **argv)
 	if(!GetConf(CF_PREMIERE))
 	{
 		db_write_users();
-		db_write_chans();
 		write_cmds();
 	}
 

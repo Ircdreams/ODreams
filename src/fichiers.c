@@ -27,7 +27,6 @@
 #include "config.h"
 #include "hash.h"
 #include "debug.h"
-#include "dnr.h"
 #include "mylog.h"
 #include "cs_cmds.h"
 #include "add_info.h"
@@ -62,55 +61,29 @@ int db_load_users(int quiet)
 		if(items < 2) continue;
 
 		strip_newline(ar[items-1]); /* remove trailing \r\n */
-		/* NICK <user> <pwd> <lvl> <TS> <flag> <RTS> <mail> <lastlogin> <lang> <id> */
+		/* NICK <user> <lvl> <lang> */
 		if(!strcmp(buf, "NICK"))
 		{
-			char *nick = ar[1], *last = ar[8], *lang = ar[9];
-			int level = strtol(ar[3], NULL, 10), flag = strtol(ar[5], NULL, 10);
-			time_t lastseen = strtol(ar[4], NULL, 10), regtime = strtol(ar[6], NULL, 10);
+			char *nick = ar[1], *lang = ar[3];
+			int level = strtol(ar[2], NULL, 10);
 
 			u = NULL; /* reset */
 
-			if(items < 11)
+			if(items < 4)
 			{
 				log_write(LOG_DB, LOG_DOTTY, "users::load(%s) item complet", ar[1]);
 				continue;
 			}
 
-			if(!(u = add_regnick(nick, ar[2], lastseen, regtime, level, flag,
-								ar[7], strtoul(ar[10], NULL, 10))))
+			if(!(u = add_regnick(nick, level)))
 			{
 				log_write(LOG_DB, LOG_DOTTY, "users::load(%s) erreur interne", nick);
 				continue;
 			}
 			++count;
-			if(*last != '0') str_dup(&u->lastlogin, last);
 			if(u->level >= ADMINLEVEL) ++adm; /* at least one admin in DB ? */
 			/* if lang was not available anymore, set to default */
 			if(!(u->lang = lang_isloaded(lang))) u->lang = DefaultLang;
-		}
-		else if(!strcmp(buf, "SUSPEND") && items > 4 && u)
-			db_parse_data(&u->suspend, u, DATA_T_SUSPEND_USER, ar);
-
-		else if(!strcmp(buf, "NOPURGE") && items > 4 && u)
-			db_parse_data(&u->nopurge, u, DATA_T_NOPURGE, ar);
-
-		else if(!strcmp(buf, "CANTREGCHAN") && items > 4 && u)
-			db_parse_data(&u->cantregchan, u, DATA_T_CANTREGCHAN, ar);
-
-		else if(!strcmp(buf, "ACCESS") && items > 5 && u)
-		{ /* ACCESS <#> <level> <flag> <lastseenTS> :info */
-			int level = strtol(ar[2], NULL, 10), flag = strtol(ar[3], NULL, 10);
-			time_t lastseen = strtol(ar[4], NULL, 10);
-
-			a = add_access(u, ar[1], level, flag, lastseen);
-			if(a && ar[5] && *ar[5]) str_dup(&a->info, ar[5]);
-		}
-
-		else if(!strcmp(buf, "COOKIE") && items > 1 && u)
-		{
-			if((u->cookie = malloc(PWDLEN + 1))) strcpy(u->cookie, ar[1]);
-			else Debug(W_WARN|W_MAX, "users::load: malloc failed for %s's cookie", u->nick);
 		}
 
 		else if(!strcmp(buf, "V"))
@@ -147,156 +120,12 @@ int db_write_users(void)
 
 	for(; i < USERHASHSIZE; ++i) for(u = user_tab[i]; u; u = u->next)
 	{
-		fprintf(fp, "NICK %s %s %d %lu %d %ld %s %s %s %lu\n",
-			u->nick, u->passwd, u->level, u->lastseen, 0, u->reg_time,
-			u->mail, u->lastlogin ? u->lastlogin : "0", u->lang->langue, u->userid);
-		if(u->suspend) fprintf(fp, "SUSPEND %s %ld %ld :%s\n", u->suspend->from,
-			u->suspend->expire, u->suspend->debut, u->suspend->raison);
-		if(u->nopurge) fprintf(fp, "NOPURGE %s %ld %ld :%s\n", u->nopurge->from,
-			u->nopurge->expire, u->nopurge->debut, u->nopurge->raison);
-		if(u->cantregchan) fprintf(fp, "CANTREGCHAN %s %ld %ld :%s\n", u->cantregchan->from,
-			u->cantregchan->expire, u->cantregchan->debut, u->cantregchan->raison);
-		if(u->cookie) fprintf(fp, "COOKIE %s\n", u->cookie);
-
-    	for(a = u->accesshead; a; a = a->next)
-    		fprintf(fp, "ACCESS %s %d %d %lu :%s\n", a->c->chan, a->level,
-    			a->flag, AOnChan(a) ? CurrentTS : a->lastseen, NONE(a->info));
+		fprintf(fp, "NICK %s %d %s\n",
+			u->nick, u->level, u->lang->langue);
 	}
 
     fclose(fp);
     return 1;
-}
-
-int db_write_chans(void)
-{
-	FILE *fp;
-	int i = 0;
-	aChan *chan;
-	aBan *ban;
-
-	if(rename(DBDIR "/" DBCHANS, DBDIR "/" DBCHANS ".back") < 0 && errno != ENOENT)
-		return log_write(LOG_DB, LOG_DOWALLOPS, "channels::write: rename() failed: %s",
-					strerror(errno));
-
-	if(!(fp = fopen(DBDIR "/" DBCHANS, "w")))
-		return log_write(LOG_DB, LOG_DOWALLOPS, "channels::write: fopen() failed: %s",
-					strerror(errno));
-
-	fprintf(fp, "V %d\n", DBVERSION_C);
-
-	for(; i < CHANHASHSIZE; ++i) for(chan = chan_tab[i]; chan; chan = chan->next)
-	{
-		fprintf(fp, "CHANNEL %s %s\nOPTIONS %d %d %d %d %lu %u %u\nURL %s %lu\n",
-			chan->chan, chan->description, chan->flag, chan->banlevel, chan->bantype, chan->cml,
-			chan->bantime, chan->limit_min, chan->limit_inc, chan->url, chan->creation_time);
-
-		if(chan->defmodes.modes) fprintf(fp, "DEFMODES %s\n", GetCModes(chan->defmodes));
-		if(*chan->deftopic) fprintf(fp, "DEFTOPIC %s\n", chan->deftopic);
-		if(chan->motd) fprintf(fp, "MOTD %s\n", chan->motd);
-		if(chan->suspend) fprintf(fp, "SUSPEND %s %ld %ld :%s\n", chan->suspend->from,
-			chan->suspend->expire, chan->suspend->debut, chan->suspend->raison);
-
-		for(ban = chan->banhead; ban; ban = ban->next)
-			fprintf(fp, "B %s %s %lu %lu %d :%s\n", ban->mask, ban->de,
-				ban->debut, ban->fin, ban->level, ban->raison);
-	}
-
-	fclose(fp);
-	return 1;
-}
-
-int db_load_chans(int quiet)
-{
-	FILE *fp;
-	aChan *c = NULL;
-	char buff[512], *ar[10];
-	int count = 0, line = 0;
-
-	if(!(fp = fopen(DBDIR "/" DBCHANS, "r")))
-	{
-		ConfFlag |= CF_PREMIERE;
-		return 0;
-	}
-
-	while(fgets(buff, sizeof buff, fp))
-	{
-		char *field = strchr(buff, ' ');
-		++line;
-		if(field) *field++ = 0;
-		else continue;
-
-		strip_newline(field);
-
-		if(!strcmp(buff, "CHANNEL"))
-		{
-			char *desc = strchr(field, ' '); /* find desc */
-			if(desc) *desc++ = 0;
-			else log_write(LOG_DB, LOG_DOTTY, "channels::load(%s): desc manquante", field);
-
-			if(!(c = add_chan(field, desc)))
-			{
-				log_write(LOG_DB, LOG_DOTTY, "channels::load(%s): erreur interne", field);
-				continue;
-			}
-			++count;
-		}
-		else if(!strcmp(buff, "DEFMODES") && c)
-		{
-			char *lim = strchr(field, ' '), *key = NULL;
-			if(lim)
-			{
-				*lim++ = 0;
-				if((key = strchr(lim, ' '))) *key++ = 0;
-			}
-			c->defmodes.modes = 0; /* otherwise, global defaults would be appended */
-			string2scmode(&c->defmodes, field, !key && strchr(field, 'k') ? lim : key, lim);
-		}
-		else if(!strcmp(buff, "DEFTOPIC") && c) Strncpy(c->deftopic, field, TOPICLEN);
-		else if(!strcmp(buff, "OPTIONS") && c)
-		{
-			int flag = 0, bantype = 0;
-			unsigned long bandefault = 0UL;
-
-			if(sscanf(field, "%d %d %d %d %lu %u %u", &flag, &c->banlevel, &bantype,
-				&c->cml, &bandefault, &c->limit_min, &c->limit_inc) != 7)
-					log_write(LOG_DB, LOG_DOTTY, "channels::load(%s): options incomplètes [%s]",
-						c->chan, field);
-
-			c->flag = (flag & ~C_JOINED);
-			c->bantype = (bantype > 4 || bantype < 1) ? 1 : bantype;
-			c->bantime = (time_t) bandefault;
-		}
-		else if(!strcmp(buff, "MOTD") && c) str_dup(&c->motd, field);
-		else if(!strcmp(buff, "URL") && c) /* url + channel ts */
-		{
-			char *creation_t = strchr(field, ' ');
-			if(creation_t) *creation_t++ = 0;
-			Strncpy(c->url, field, sizeof c->url -1);
-			c->creation_time = (creation_t && *creation_t) ? strtoul(creation_t, NULL, 10) : 0;
-		}
-		else if(!strcmp(buff, "SUSPEND") && c)
-		{
-			if(split_buf(field, ar + 1, ASIZE(ar) -1) == 4)
-				db_parse_data(&c->suspend, c, DATA_T_SUSPEND_CHAN, ar);
-		}
-		else if(!strcmp(buff, "B") && c)
-		{	/* mask de debut fin level :raison */
-			time_t debut, fin;
-
-			split_buf(field, ar, ASIZE(ar));
-			debut = strtol(ar[2], NULL, 10);
-			fin = strtol(ar[3], NULL, 10);
-			if(!fin || CurrentTS < fin)
-				ban_load(c, ar[0], ar[5], ar[1], debut, fin ? fin - debut : 0, atoi(ar[4]));
-		}
-		else if(strcmp(buff, "V") && c)
-				log_write(LOG_DB, LOG_DOTTY, "channels::load:%d: unknown data %s [%s]",
-					line, buff, field);
-	}
-	fclose(fp);
-
-	if(!quiet) printf("Base de donnée Salon chargée (%d)\n", count);
-	return count;
 }
 
 void write_cmds(void)
@@ -357,20 +186,11 @@ int write_files(aNick *nick, aChan *chan, int parc, char **parv)
 	int write = 0;
 
 	if(getoption("-user", parv, parc, 1, GOPT_FLAG)) write |= 0x1;
-	if(getoption("-chan", parv, parc, 1, GOPT_FLAG)) write |= 0x2;
 
 	switch(write)
 	{
 		case 0:
-			write_dnr();
 			write_cmds();
-		case 0x1|0x2:
-			db_write_chans();
-			db_write_users();
-			break;
-		case 0x2:
-			db_write_chans();
-			break;
 		case 0x1:
 			db_write_users();
 			break;

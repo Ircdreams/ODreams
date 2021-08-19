@@ -69,8 +69,7 @@ extern int switch_user(anUser *, const char *);
 extern int switch_mail(anUser *, const char *);
 extern anUser *getuserinfo(const char *);
 extern anUser *GetUserIbyID(unsigned long);
-extern anUser *add_regnick(const char *, const char *, time_t, time_t, int,
-							int, const char *, unsigned long);
+extern anUser *add_regnick(const char *,  int);
 extern void del_regnick(anUser *, int, const char *);
 
 /* cmd */

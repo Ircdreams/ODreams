@@ -34,9 +34,7 @@
 #include "showcommands.h"
 #include "aide.h"
 #include "data.h"
-#include "dnr.h"
 #include "timers.h"
-#include "template.h"
 #include "socket.h"
 
 int uptime(aNick *nick, aChan *chan, int parc, char **parv)
@@ -150,11 +148,9 @@ void CleanUp(void)
 		free(cmd);
 	}
 
-	tmpl_clean();
 	lang_clean();
 	ignore_clean();
 	timer_clean();
-	dnr_clean();
 	log_clean(0);
 }
 

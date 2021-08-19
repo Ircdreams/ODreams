@@ -69,23 +69,21 @@ VERSION = @VERSION@
 
 odreams_PROGRAMS = ODreams
 bin_PROGRAMS = $(odreams_PROGRAMS)
-convertdb_PROGRAMS = convertdb
 
 INCLUDES = -I../include
 INCLUDES_DIR = ../include
 DEFS = -I$(srcdir)
 odreams_SOURCES = main.c mystring.c outils.c cs_cmds.c serveur.c fichiers.c add_info.c del_info.c mylog.c \
 		 config.c lang.c mkpasswd.c showcommands.c checksum.c \
-		 hash.c hash_chan.c socket.c hash_cmd.c hash_user.c hash_nick.c data.c dnr.c \
+		 hash.c hash_chan.c socket.c hash_cmd.c hash_user.c hash_nick.c data.c \
 		 divers.c aide.c admin_cmds.c admin_manage.c admin_user.c admin_chan.c \
 		 cs_register.c chanserv.c match.c opdeop.c \
-		 userinfo.c debug.c template.c timers.c flood.c
-convertdb_SOURCES = convertdb.c mystring.c
+		 userinfo.c debug.c timers.c flood.c
 
 mkinstalldirs = $(SHELL) $(top_srcdir)/mkinstalldirs
 CONFIG_HEADER = ../config.h
 CONFIG_CLEAN_FILES =
-PROGRAMS = $(bin_PROGRAMS) $(convertdb_PROGRAMS)
+PROGRAMS = $(bin_PROGRAMS)
 
 dbdir = ${prefix}/`sed -n 's/^\#define DBDIR \"\(.*\)\"/\1/p' < ${CONFIG_HEADER} `
 
@@ -96,9 +94,6 @@ CFLAGS = @CFLAGS@
 odreams_OBJECTS = ${odreams_SOURCES:%.c=%.o}
 odreams_LDADD = $(LDADD)
 odreams_LDFLAGS =
-convertdb_OBJECTS = ${convertdb_SOURCES:%.c=%.o}
-convertdb_LDADD = $(LDADD)
-convertdb_LDFLAGS =
 COMPILE = $(CC) $(CPPFLAGS) $(CFLAGS) $(DEFS) $(INCLUDES)
 CCLD = $(CC)
 LINK = $(CCLD) $(CFLAGS) $(LDFLAGS) -o $@
@@ -162,11 +157,6 @@ uninstall-binPROGRAMS:
 
 .S.o:
 	$(COMPILE) -c $<
-
-convertdb: $(convertdb_OBJECTS)
-	@rm -f convertdb ../bin/convertdb
-	$(LINK) $(convertdb_LDFLAGS) $(convertdb_OBJECTS) $(convertdb_LDADD) $(LIBS)
-	ln -s ../src/convertdb ../bin/convertdb
 
 ODreams: $(odreams_OBJECTS)
 	@rm -f ODreams
@@ -244,9 +234,6 @@ install: all
 uninstall: uninstall-binPROGRAMS
 
 all: Makefile $(PROGRAMS)
-	@if ! test -f ../bin/$(convertdb_PROGRAMS); then \
-		ln -s ../src/convertdb ../bin/convertdb; \
-	fi;
 
 install-strip:
 	$(MAKE) $(AM_MAKEFLAGS) AM_INSTALL_PROGRAM_FLAGS=-s install
@@ -297,7 +284,7 @@ admin_cmds.o: admin_cmds.c ../include/main.h ../include/mystring.h \
   ../include/outils.h ../include/cs_cmds.h ../include/token.h \
   ../include/fichiers.h ../include/add_info.h ../include/aide.h \
   ../include/showcommands.h ../include/hash.h ../config.h \
-  ../include/template.h ../include/timers.h
+  ../include/timers.h
 admin_manage.o: admin_manage.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/add_info.h ../include/outils.h ../include/cs_cmds.h \
@@ -324,9 +311,6 @@ checksum.o: checksum.c ../include/main.h ../include/mystring.h \
 config.o: config.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../config.h ../include/outils.h ../include/mylog.h
-convertdb.o: convertdb.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/hash.h ../include/fichiers.h
 cs_cmds.o: cs_cmds.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/cs_cmds.h ../include/token.h ../include/admin_manage.h \
@@ -336,8 +320,7 @@ cs_register.o: cs_register.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/hash.h ../include/add_info.h ../include/fichiers.h \
   ../include/outils.h ../include/cs_cmds.h ../include/token.h ../config.h \
-  ../include/crypt.h ../include/template.h ../include/data.h \
-  ../include/dnr.h
+  ../include/crypt.h ../include/data.h
 data.o: data.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/outils.h ../include/timers.h ../include/debug.h \
@@ -357,17 +340,11 @@ divers.o: divers.c ../include/main.h ../include/mystring.h \
   ../include/outils.h ../include/hash.h ../include/mylog.h \
   ../include/cs_cmds.h ../include/token.h ../include/admin_manage.h \
   ../include/flood.h ../include/showcommands.h ../include/aide.h \
-  ../include/dnr.h ../include/timers.h ../include/template.h \
-  ../include/socket.h
-dnr.o: dnr.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/outils.h ../include/mystring.h ../include/mylog.h \
-  ../include/cs_cmds.h ../include/token.h ../include/debug.h \
-  ../include/dnr.h
+  ../include/timers.h ../include/socket.h
 fichiers.o: fichiers.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../include/fichiers.h ../include/outils.h ../config.h ../include/hash.h \
-  ../include/debug.h ../include/dnr.h ../include/mylog.h \
+  ../include/debug.h ../include/mylog.h \
   ../include/cs_cmds.h ../include/token.h ../include/add_info.h \
   ../include/data.h
 flood.o: flood.c ../include/main.h ../include/mystring.h \
@@ -407,11 +384,9 @@ main.o: main.c ../include/main.h ../include/mystring.h \
   ../include/serveur.h ../include/fichiers.h ../include/chanserv.h \
   ../include/admin_user.h ../include/admin_cmds.h \
   ../include/admin_chan.h ../include/admin_manage.h ../include/divers.h \
-  ../include/opdeop.h \
-  ../include/showcommands.h ../include/aide.h \
+  ../include/opdeop.h ../include/showcommands.h ../include/aide.h \
   ../include/cs_register.h ../include/cs_cmds.h ../include/token.h \
-  ../include/timers.h ../include/socket.h \
-  ../include/dnr.h ../include/flood.h ../include/template.h \
+  ../include/timers.h ../include/socket.h ../include/flood.h \
   ../include/version.h
 match.o: match.c
 mkpasswd.o: mkpasswd.c ../include/main.h ../include/mystring.h \
@@ -448,9 +423,6 @@ socket.o: socket.c ../include/main.h ../include/mystring.h \
   ../include/outils.h ../include/serveur.h ../include/socket.h \
   ../include/hash.h ../include/mylog.h ../include/cs_cmds.h \
   ../include/token.h ../include/add_info.h ../include/timers.h
-template.o: template.c ../include/main.h ../include/mystring.h \
-  ../include/../config.h ../include/lang.h ../include/structs.h \
-  ../include/lang.h ../include/debug.h ../config.h
 timers.o: timers.c ../include/main.h ../include/mystring.h \
   ../include/../config.h ../include/lang.h ../include/structs.h \
   ../config.h ../include/outils.h ../include/hash.h ../include/del_info.h \

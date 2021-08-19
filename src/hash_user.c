@@ -171,25 +171,6 @@ anUser *add_regnick(const char *user, int level)
 	return u;
 }
 
-anUser *add_regnick(const char *user, int level)
-{
-  anUser *new;
-  unsigned int hash = do_hashu(user);
-
-  if(!(new = calloc(1, sizeof *new)))
-  {
-    Debug(W_MAX|W_WARN, "add_regnick, malloc a échoué pour anUser %s", user);
-    return NULL;
-  }
-
-  Strncpy(new->nick, user, NICKLEN);
-  new->level = level;
-
-  new->next = user_tab[hash];
-  user_tab[hash] = new;
-  return new;
-}
-
 void del_regnick(anUser *user, int flag, const char *raison)
 {
 	anAccess *acces, *acces_t;

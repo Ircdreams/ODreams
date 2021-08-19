@@ -55,46 +55,6 @@ void check_accounts(void)
 	}
 }
 
-void check_chans(void)
-{
-	aChan *c, *next;
-	int i = 0;
-	char raison[TOPICLEN+1];
-
-	for(; i < CHANHASHSIZE; ++i) for(c = chan_tab[i]; c; c = next)
-	{
-		next = c->next;
-
-		if(!CSuspend(c) && CJoined(c) && c->netchan->users == 0 /* empty */
-		&& !HasMode(c->netchan, C_MKEY|C_MINV) && CurrentTS - c->lastact > cf_chanmaxidle)
-			cspart(c, "Idle");
-
-		if(!c->access || !c->owner)
-			log_write(LOG_MAIN, 0, "chan_check: Channel %s has no %s -- Why ?!",
-				c->chan, c->owner ? "access" : "owner");
-
-		else if(!AOnChan(c->owner) && !UNopurge(c->owner->user) && !IsAdmin(c->owner->user))
-		{
-			if(c->owner->lastseen + cf_maxlastseen < CurrentTS)
-			{
-				mysnprintf(raison, sizeof raison, "Pas de visite de l'owner depuis \2%s",
-					get_time(NULL, c->owner->lastseen));
-				del_chan(c, HF_LOG, raison);
-			}
-			else if(c->owner->lastseen + cf_maxlastseen - cf_warn_purge_delay < CurrentTS
-				&& !CWarned(c))
-			{
-				c->flag |= C_LOCKTOPIC|C_WARNED;
-				mysnprintf(raison, TOPICLEN, GetUReply(c->owner->user, L_CHANNELPURGEWARN),
-					get_time(NULL, c->owner->lastseen + cf_maxlastseen));
-
-				if(CJoined(c)) cstopic(c, raison);
-				else strcpy(c->deftopic, raison);
-			}
-		}
-	} /* for() */
-}
-
 #ifdef TDEBUG
 #	define TDEBUGF(x) timer_debug x
 void timer_debug(const char *fmt, ...)
@@ -241,15 +201,8 @@ int callback_check_accounts(Timer *timer)
 	return 0;
 }
 
-int callback_check_chans(Timer *timer)
-{
-	check_chans();
-	return 0;
-}
-
 int callback_write_dbs(Timer *timer)
 {
-	db_write_chans();
 	db_write_users();
 	CurrentTS = time(NULL); /* because db writing can take a lot */
 	return 0;

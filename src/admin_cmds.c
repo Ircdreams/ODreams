@@ -30,7 +30,6 @@
 #include "showcommands.h"
 #include "hash.h"
 #include "config.h"
-#include "template.h"
 #include "timers.h"
 
 int inviteme(aNick *nick, aChan *chan, int parc, char **parv)
@@ -172,13 +171,7 @@ int rehash_conf(aNick *nick, aChan *chan, int parc, char **parv)
 	if(getoption("-purge", parv, parc, 1, GOPT_FLAG))
 	{
 		check_accounts();
-		check_chans();
 		return csreply(nick, "Purge effectuée.");
-	}
-	if(getoption("-template", parv, parc, 1, GOPT_FLAG))
-	{
-		tmpl_load();
-		return csreply(nick, "Templates reloaded from disk.");
 	}
 	if((langs = getoption("-aide", parv, parc, 1, GOPT_STR)))
 	{

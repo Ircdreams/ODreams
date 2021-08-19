@@ -585,7 +585,6 @@ PACKAGE_STRING='ODreams 2.0'
 PACKAGE_BUGREPORT='http://www.bugsounet.fr'
 PACKAGE_URL=''
 
-ac_unique_file="bin/convert.c"
 ac_default_prefix=~/Dreams/ODreams
 # Factoring default headers for most tests.
 ac_includes_default="\
@@ -2517,7 +2516,6 @@ else
    { $as_echo "$as_me:${as_lineno-$LINENO}: result: missing" >&5
 $as_echo "missing" >&6; }
 fi
-
 
 
 

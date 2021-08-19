@@ -24,7 +24,6 @@ AC_PREREQ(2.59)
 AC_INIT(ODreams, 2.0, http://www.bugsounet.fr)
 AM_INIT_AUTOMAKE
 
-AC_CONFIG_SRCDIR([bin/convert.c])
 AM_CONFIG_HEADER(config.h)
 
 AC_PREFIX_DEFAULT(~/Dreams/ODreams)

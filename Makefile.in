@@ -297,7 +297,6 @@ install-data: install-data-recursive
 install-am: all-am
 	@$(MAKE) $(AM_MAKEFLAGS) install-exec-am install-data-am
 install: install-recursive
-	@bin/convertdb
 	@echo "		**";echo "		*  N'oubliez pas de lire README";echo "		**"
 uninstall-am:
 uninstall: uninstall-recursive
@@ -314,7 +313,6 @@ mostlyclean-generic:
 distclean-generic:
 	-rm -f Makefile $(CONFIG_CLEAN_FILES)
 	-rm -f config.cache config.log stamp-h stamp-h[0-9]*
-	-rm -f bin/convertdb
 	-rm -f .#*
 	-rm -f *~
 
