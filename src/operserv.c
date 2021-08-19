@@ -515,7 +515,7 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
 
     for(;tmp;tmp = tmp->next) {
       if (tmp->time > CurrentTS)
-        putserv("%s GL * +%s %d :%s [Expire %s]", bot.servnum, tmp->host, tmp->time - CurrentTS, tmp->raison, get_time(NULL,tmp->time));
+        putserv("%s GL * +%s %d %d %d :%s [Expire %s]", bot.servnum, tmp->host, tmp->time - CurrentTS, tmp, tmp->time, tmp->raison, get_time(NULL,tmp->time));
     }
     osntc(nick, "Liste des hosts glined replacé avec succès!");
   }
@@ -561,7 +561,7 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
 
       for(;tmp;tmp = save) {
       save = tmp->next;
-      putserv("%s GL * -%s", bot.servnum, tmp->host);
+      putserv("%s GL * -%s %d %d", bot.servnum, tmp->host, tmt, tmt);
       putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037UNGLINE\2\3 %s",
         os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, tmp->host);
       osntc(nick, "Glined-Host supprimé: %s", tmp->host);
@@ -595,7 +595,7 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
       
     putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037GLINE\2\3 %s -- Durée: %s -- Raison: %s",
       os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, host, duration(tmpp), msg);
-    putserv("%s GL * +%s %d :%s  [Expire %s]", bot.servnum, host, tmpp, msg, get_time(NULL,CurrentTS + tmpp));  
+    putserv("%s GL * +%s %d %d %d:%s  [Expire %s]", bot.servnum, host, tmpp, tmt, tmt, msg, get_time(NULL,CurrentTS + tmpp));  
     add_gline(host, CurrentTS + tmpp, msg);
     write_gline();
     osntc(nick, "Gline ajouté: %s -- Durée: %s -- Raison: %s", host, duration(tmpp), msg);
