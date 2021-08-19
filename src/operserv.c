@@ -595,7 +595,7 @@ int xgline(aNick *nick, aChan *chan, int parc, char **parv)
       
     putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] * \2\0037GLINE\2\3 %s -- Durée: %s -- Raison: %s",
       os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, host, duration(tmpp), msg);
-    putserv("%s GL * +%s %d %d %d:%s  [Expire %s]", bot.servnum, host, tmpp, tmt, tmt, msg, get_time(NULL,CurrentTS + tmpp));  
+    putserv("%s GL * +%s %d %d %d :%s  [Expire %s]", bot.servnum, host, tmpp, tmt, tmt, msg, get_time(NULL,CurrentTS + tmpp));  
     add_gline(host, CurrentTS + tmpp, msg);
     write_gline();
     osntc(nick, "Gline ajouté: %s -- Durée: %s -- Raison: %s", host, duration(tmpp), msg);
