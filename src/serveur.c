@@ -205,7 +205,7 @@ int m_mode(int parc, char **parv)
             os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1]);
           putserv("%s " TOKEN_WALLOPS " :%s is now an Irc Administrator", os.num,parv[1]);
         }
-        if(*modes == 'o' && !(nick->flag & N_ADM) && !(nick->flag & N_COADM))
+        if(*modes == 'o' && !(nick->flag & N_ADM))
         {
           putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] ! \2\0037OPER\2\3 %s is now an Irc Operator (+o)",
             os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1]);
@@ -223,7 +223,7 @@ int m_mode(int parc, char **parv)
           putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] ! \2\0037OPER\2\3 %s is no longer an Irc Administrator (-a)",
             os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1]);
         }
-        if(*modes == 'o' && !(nick->flag & N_ADM) && !(nick->flag & N_COADM))
+        if(*modes == 'o' && !(nick->flag & N_ADM))
         {
           putserv("%s " TOKEN_PRIVMSG " %s :[%02d:%02d:%02d] ! \2\0037OPER\2\3 %s is no longer an Irc Operator (-o)",
             os.num, bot.pchan, ntime->tm_hour, ntime->tm_min, ntime->tm_sec, parv[1]);
@@ -316,7 +316,7 @@ int m_join(int parc, char **parv)
   /* arrivé sur un badchan */
   if (IsBadChan(parv[1]) && !IsExChan(parv[1])) {
     bad = IsBadChan(parv[1]);
-    putserv("%s GL * +%s 3600 :%s [%s]", bot.servnum, parv[1], bad->raison, os.nick);
+    putserv("%s GL * +%s 3600 %d %d :%s [%s]", bot.servnum, parv[1], tmt, tmt + 3600, bad->raison, os.nick);
   }
 
   return 0;
@@ -346,7 +346,7 @@ int m_create(int parc, char **parv)
   /* arrivé sur un badchan */
   if (IsBadChan(parv[1]) && !IsExChan(parv[1])) {
     bad = IsBadChan(parv[1]);   
-    putserv("%s GL * +%s 3600 :%s [%s]", bot.servnum, parv[1], bad->raison, os.nick);
+    putserv("%s GL * +%s 3600 %d %d :%s [%s]", bot.servnum, parv[1], tmt, tmt + 3600, bad->raison, os.nick);
   }
   return 0;
 }
@@ -417,7 +417,7 @@ int m_nick(int parc, char **parv)
         for(n = nick_tab[i];n;n = n->next)
         {
           if(!strcasecmp(who->host,n->host))
-            osntc(n, "Votre adresse de connexion *@%s est arrivée au nombre maximum de clones autorisés. Merci de bien vouloir en supprimer.", n->host);
+            osntc(n, "Your host (*@%s) has reached the maximum number of clones allowed. Please delete some", n->host);
         }
       }
     }
@@ -426,9 +426,9 @@ int m_nick(int parc, char **parv)
       strcpy(params, "*@");
       strcat(params, GetIP(who->base64));
 
-      putserv("%s GL * +%s 3600 :Trop de Clones [Expire %s]", bot.servnum, params, get_time(NULL,end));
+      putserv("%s GL * +%s 3600 %d %d :Excess for Clones [Expire %s]", bot.servnum, params, tmt, end, get_time(NULL,end));
       add_gline(params,end, "Trop de clones");
-      oswallops("CLONES *@%s G-Lined [Trop de Clones]", who->host, clonage, clonemax);
+      oswallops("CLONES *@%s G-Lined [Excess of Clones]", who->host);
     }
 
     if(*parv[6] == '+')
@@ -460,8 +460,8 @@ int m_nick(int parc, char **parv)
   if(IsBadNick(nick) && !IsExNick(nick) && !IsOper(who) && (!who->user || !IsAdmin(who->user)))
   {
     bad = IsBadNick(nick);
-    osntc(who, "\2Avertissement\2 : Vous venez de prendre un pseudo illégal");
-    osntc(who, "Raison: %s", bad->raison);
+    osntc(who, "\2Warning\2 : You just used an illegal nickname");
+    osntc(who, "Reason: %s", bad->raison);
     do {
       sprintf(buf, "%.20s%d", chnick, rand() & 1023);
     } while(getnickbynick(buf));

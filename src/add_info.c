@@ -101,8 +101,10 @@ void add_trusted(const char *ip)
 {
   struct trusted *ptr = malloc(sizeof *ptr);
 
-  if(!ptr)
-    return Debug(W_MAX, "add_trusted, malloc a échoué pour l'ip %s", ip);
+  if(!ptr) {
+    Debug(W_MAX, "add_trusted, malloc a échoué pour l'ip %s", ip);
+    return;
+  }
 
   Strncpy(ptr->ip, ip, 15);
   ptr->next = trusthead;
@@ -121,8 +123,10 @@ void add_gline(const char *host, int time, const char *raison)
     }
   }
 
-  if(!ptr)
-    return Debug(W_MAX, "add_gline, malloc a échoué pour le host %s", host);
+  if(!ptr) {
+    Debug(W_MAX, "add_gline, malloc a échoué pour le host %s", host);
+    return;
+  }
 
   Strncpy(ptr->host, host, HOSTLEN);
   ptr->time = time;
@@ -143,9 +147,10 @@ void add_trace(const char *mask, const char *raison)
     }
   }
 
-  if(!ptr)
-  return Debug(W_MAX, "add_trace, malloc a échoué pour le mask %s", mask);
-
+  if(!ptr) {
+    Debug(W_MAX, "add_trace, malloc a échoué pour le mask %s", mask);
+    return;
+  }
   Strncpy(ptr->mask, mask, HOSTLEN);
   Strncpy(ptr->raison, raison, sizeof ptr->raison -1);
   ptr->next = tracehead;
@@ -164,8 +169,10 @@ void add_shun(const char *host, int time, const char *raison)
     }
   }
 
-  if(!ptr)
-    return Debug(W_MAX, "add_shun, malloc a échoué pour le host %s", host);
+  if(!ptr) {
+    Debug(W_MAX, "add_shun, malloc a échoué pour le host %s", host);
+    return;
+  }
 
   Strncpy(ptr->host, host, HOSTLEN);
   ptr->time = time;

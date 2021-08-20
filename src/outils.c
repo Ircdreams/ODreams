@@ -80,7 +80,6 @@ static const struct Modes {
 	{ 'I', N_IDLE },
 	{ 'P', N_PRIVATE },
 	{ 'X', N_HIDE },
-	{ 'c', N_COADM },
 },
 	CMode[] = {
 	{ 'n', C_MMSG },
@@ -304,13 +303,13 @@ char *get_time(aNick *nick, time_t mytime)
 	int i = 0;
 	const char *ptr = {0};
 
-	if(lt->tm_wday == 0) ptr = "Dimanche";
-	if(lt->tm_wday == 1) ptr = "Lundi";
-	if(lt->tm_wday == 2) ptr = "Mardi";
-	if(lt->tm_wday == 3) ptr = "Mercredi";
-	if(lt->tm_wday == 4) ptr = "Jeudi";
-	if(lt->tm_wday == 5) ptr = "Vendredi";
-	if(lt->tm_wday == 6) ptr = "Samedi";
+	if(lt->tm_wday == 0) ptr = "Sunday";
+	if(lt->tm_wday == 1) ptr = "Monday";
+	if(lt->tm_wday == 2) ptr = "Tuesday";
+	if(lt->tm_wday == 3) ptr = "Wednesday";
+	if(lt->tm_wday == 4) ptr = "Thusday";
+	if(lt->tm_wday == 5) ptr = "Friday";
+	if(lt->tm_wday == 6) ptr = "Saturday";
 
         while((buftime[i++] = *ptr++)); 
     

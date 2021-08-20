@@ -55,15 +55,16 @@ void putserv(const char *fmt, ...)
 
 static const char *table_dec = "0123456789";
 
-int osntc(aNick *nick, register const char *fmt, ...)
+int osntc(aNick *nick, const char *format, ...)
 {	/* APACS N YYXXX :f*/
 	static char buf[512];
 	register char *p = buf;
+	register const char *fmt = format;
 	char t, *end = p + 509;
 	int len = 0;
 	va_list vl;
 
-	va_start(vl, fmt);
+	va_start(vl, format);
 
 	if(buf[0] == 0)
 	{
